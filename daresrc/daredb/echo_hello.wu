@@ -1,0 +1,31 @@
+#__author__    = "Sharath Maddineni"
+#__email__     = "smaddineni@cct.lsu.edu"
+#__copyright__ = "Copyright 2011, Sharath Maddineni"
+#__license__   = "MIT"
+
+
+[wu]
+executable = /bin/date
+arg_1 = -a
+#default_value
+arg_1_val = 123
+arg_2 = -b
+#default_value
+arg_2_val = 
+arg_3  = ""
+arg_3_path = True 
+arg_4 = -o
+arg_4_val = arg_2.pin
+#the output filenam  is 
+is_out = arg_4
+env_1  = True
+env_1_name = "PATH"
+
+
+[machine_1]
+arg_3 = "/path/to/file"
+env_1 = "/usr/bin/"
+
+[machine_2]
+arg_3 = "/path/to/file"
+env_1 = "/usr/bin/"

@@ -1,0 +1,16 @@
+[main]
+steps = hello_1, hello_2, hello_3
+jobid = 1
+webupdate= False
+
+[wus_1]
+step = hello_1
+wu_type = echo_hello
+diff_inputs = "hello", "world", "hello_world"
+
+
+[wus_2]
+step = hello_2
+wu_type = echo_hello
+diff_inputs = "bye", "world", "bye_world"
+arg_2 = ""

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>dare.utils.cfgparser</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="dare-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="dare-module.html">Package&nbsp;dare</a> ::
+        <a href="dare.utils-module.html">Package&nbsp;utils</a> ::
+        Package&nbsp;cfgparser
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="dare.utils.cfgparser-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="dare.utils.cfgparser-module.html">Package dare.utils.cfgparser</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/env python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-name">__author__</tt>    <tt class="py-op">=</tt> <tt class="py-docstring">"Sharath Maddineni"</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt id="link-0" class="py-name" targets="Variable dare.__email__=dare-module.html#__email__,Variable dare.api.__email__=dare.api-module.html#__email__,Variable dare.dare.__email__=dare.dare-module.html#__email__,Variable dare.dare.daremanager.__email__=dare.dare.daremanager-module.html#__email__,Variable dare.dare.dareunits.__email__=dare.dare.dareunits-module.html#__email__,Variable dare.dare.dareunits.dataunit.__email__=dare.dare.dareunits.dataunit-module.html#__email__,Variable dare.dare.dareunits.resourceunit.__email__=dare.dare.dareunits.resourceunit-module.html#__email__,Variable dare.dare.dareunits.stepunit.__email__=dare.dare.dareunits.stepunit-module.html#__email__,Variable dare.dare.dareunits.workunit.__email__=dare.dare.dareunits.workunit-module.html#__email__,Variable dare.utils.__email__=dare.utils-module.html#__email__,Variable dare.utils.cfgparser.__email__=dare.utils.cfgparser-module.html#__email__,Variable dare.utils.cfgparser.cfgparser.__email__=dare.utils.cfgparser.cfgparser-module.html#__email__,Variable dare.utils.compute.__email__=dare.utils.compute-module.html#__email__,Variable dare.utils.compute.compute.__email__=dare.utils.compute.compute-module.html#__email__,Variable dare.utils.data.__email__=dare.utils.data-module.html#__email__,Variable dare.utils.data.data.__email__=dare.utils.data.data-module.html#__email__,Variable dare.utils.updater.__email__=dare.utils.updater-module.html#__email__"><a title="dare.__email__
+dare.api.__email__
+dare.dare.__email__
+dare.dare.daremanager.__email__
+dare.dare.dareunits.__email__
+dare.dare.dareunits.dataunit.__email__
+dare.dare.dareunits.resourceunit.__email__
+dare.dare.dareunits.stepunit.__email__
+dare.dare.dareunits.workunit.__email__
+dare.utils.__email__
+dare.utils.cfgparser.__email__
+dare.utils.cfgparser.cfgparser.__email__
+dare.utils.compute.__email__
+dare.utils.compute.compute.__email__
+dare.utils.data.__email__
+dare.utils.data.data.__email__
+dare.utils.updater.__email__" class="py-name" href="#" onclick="return doclink('link-0', '__email__', 'link-0');">__email__</a></tt>     <tt class="py-op">=</tt> <tt class="py-string">"smaddineni@cct.lsu.edu"</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-name">__copyright__</tt> <tt class="py-op">=</tt> <tt class="py-string">"Copyright 2011, Sharath Maddineni"</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt id="link-1" class="py-name" targets="Variable dare.utils.compute.compute.__license__=dare.utils.compute.compute-module.html#__license__"><a title="dare.utils.compute.compute.__license__" class="py-name" href="#" onclick="return doclink('link-1', '__license__', 'link-1');">__license__</a></tt>   <tt class="py-op">=</tt> <tt class="py-string">"MIT"</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-2" class="py-name" targets="Package dare=dare-module.html,Package dare.dare=dare.dare-module.html"><a title="dare
+dare.dare" class="py-name" href="#" onclick="return doclink('link-2', 'dare', 'link-2');">dare</a></tt><tt class="py-op">.</tt><tt id="link-3" class="py-name" targets="Package dare.utils=dare.utils-module.html"><a title="dare.utils" class="py-name" href="#" onclick="return doclink('link-3', 'utils', 'link-3');">utils</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Package dare.utils.cfgparser=dare.utils.cfgparser-module.html,Module dare.utils.cfgparser.cfgparser=dare.utils.cfgparser.cfgparser-module.html"><a title="dare.utils.cfgparser
+dare.utils.cfgparser.cfgparser" class="py-name" href="#" onclick="return doclink('link-4', 'cfgparser', 'link-4');">cfgparser</a></tt><tt class="py-op">.</tt><tt id="link-5" class="py-name"><a title="dare.utils.cfgparser
+dare.utils.cfgparser.cfgparser" class="py-name" href="#" onclick="return doclink('link-5', 'cfgparser', 'link-4');">cfgparser</a></tt> <tt class="py-keyword">import</tt> <tt id="link-6" class="py-name" targets="Class dare.utils.cfgparser.cfgparser.CfgParser=dare.utils.cfgparser.cfgparser.CfgParser-class.html"><a title="dare.utils.cfgparser.cfgparser.CfgParser" class="py-name" href="#" onclick="return doclink('link-6', 'CfgParser', 'link-6');">CfgParser</a></tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="dare-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Wed Nov 23 12:59:35 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

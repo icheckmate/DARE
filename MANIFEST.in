@@ -1,0 +1,6 @@
+include *.py
+include dare/*.py
+include dare/plugins/*.py
+include bliss/runtime/*.py
+
+include MANIFEST.in README LICENSE CHANGES

@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+__author__    = "Sharath Maddineni"
+__email__     = "smaddineni@cct.lsu.edu"
+__copyright__ = "Copyright 2011, Sharath Maddineni"
+__license__   = "MIT"
+
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "..")
+
+import optparse
+parser = optparse.OptionParser()
+
+from daresrc.runtime import DareManager
+from daresrc.utils.cfgparser import CfgParser
+from daresrc import logging
+
+if __name__ == "__main__":
+    
+    # parse conf files
+    #parser = optparse.OptionParser()
+    #parser.add_option("-c", "--conf_job", dest="conf_job", help="job configuration file")
+    #(options, args) = parser.parse_args()
+
+    #confjob = options.conf_job
+
+    conffile = sys.argv[1]
+    
+    dareconf = CfgParser(conffile)
+    info_dare = dareconf.SectionDict('main') 
+    logging.debug("starting DARE")
+    dare = DareManager(dareconf)
+    dare.start()
+    logging.debug(" DARE Exec Done")
+     
+   

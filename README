@@ -1,0 +1,7 @@
+To achieve the goal of supporting both types of parallelism, on heterogeneous distributed computing resources, we have developed the Dynamic Application Runtime Environment (DARE) framework.
+
+At the core of the DARE framework, is a SAGA BigJob (which is a flexible general purpose pilot-job implementation). With a suitable Web development framework, it supports the development of a lightweight but extensible, science gateway capable of using a range of distributed resources. In subsequent sections, we will demonstrate via performance numbers the effectiveness of how the DARE framework supports a wide range of infrastructure, problem instance configurations and size.
+
+for more information please visit 
+
+http://dare.cct.lsu.edu/
