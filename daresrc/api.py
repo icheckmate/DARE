@@ -77,14 +77,6 @@ class DataUnitStates(object):
     Canceled = 4
     Failed = 5
 
-
-class Compute(object):
-    #take care of launching pilot jobs and just give a work unit service
-    def ComputeService(pj_descs):
-        # start pilot jobs
-        # return a work unit service
-        pass
-
 class Data(object):
     # transferring required data
     def SubmitFiletransfer(ft_descs):

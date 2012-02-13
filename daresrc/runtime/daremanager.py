@@ -24,9 +24,8 @@ class DareManager(object):
         
         
         self.dare_id = "dare-" + str(uuid.uuid1())
-        
-        self.dare_web_id = webid
-        
+
+        self.dare_web_id = webid    
         self.darecfg = {}
 
         self.webupdater = Updater()
