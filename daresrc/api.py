@@ -43,7 +43,33 @@ class DareUnit(object):
         pass
         
         
-class State(object):
+class WorkUnitStates(object):
+    Unknown = 0
+    New = 1
+    Running = 2
+    Done = 3
+    Canceled = 4
+    Failed = 5
+
+class ReosourceStates(object):
+    Unknown = 0
+    New = 1
+    Running = 2
+    Done = 3
+    Canceled = 4
+    Failed = 5
+    Queue = 6
+
+class StepStates(object):
+    Unknown = 0
+    New = 1
+    Running = 2
+    Done = 3
+    Canceled = 4
+    Failed = 5
+    Queue = 6
+    
+class DataUnitStates(object):
     Unknown = 0
     New = 1
     Running = 2

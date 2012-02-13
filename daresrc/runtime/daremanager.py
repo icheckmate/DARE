@@ -7,10 +7,10 @@ __license__   = "MIT"
 
 from .dareunits import DataUnit
 
-from daresrc.utils.compute import Compute
-from daresrc.utils.data import Data
+from .bigjobservices import ResourceService, SubjobService
+from .data import Data
 
-from daresrc.utils.updater import Updater
+from .updater import Updater
 
 import uuid
 
@@ -28,22 +28,12 @@ class DareManager(object):
         self.dare_web_id = webid
         
         self.darecfg = {}
-        
-        self.resource_repo = []
-        self.step_repo = []
-        self.wu_repo = []
-        self.du_repo = []
 
         self.webupdater = Updater()
 
         self.wus_count = 0
         self.dus_count = 0
 
-        self.wu_start_times = {}
-        self.wu_states = {}
-        self.dus_start_times = {}
-        self.du_states = {}
-        
         self.webupdate = webupdate
 
     def create_static_workflow():
@@ -147,6 +137,7 @@ class DareManager(object):
                     "fromurl":filename,
                     "tourl":tourl,
                     "type":"scp"
+                     "Status":"New"
                     }
 
         # add this du to step

@@ -5,3 +5,6 @@ __email__     = "smaddineni@cct.lsu.edu"
 __copyright__ = "Copyright 2011, Sharath Maddineni"
 __license__   = "MIT"
 
+
+from .resourceservice import ResourceService
+from .subjobservice import SubjobService
