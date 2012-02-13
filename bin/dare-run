@@ -14,7 +14,7 @@ import optparse
 parser = optparse.OptionParser()
 
 from daresrc.runtime import DareManager
-from daresrc.utils.cfgparser import CfgParser
+
 from daresrc import logging
 
 if __name__ == "__main__":
@@ -28,8 +28,6 @@ if __name__ == "__main__":
 
     conffile = sys.argv[1]
     
-    dareconf = CfgParser(conffile)
-    info_dare = dareconf.SectionDict('main') 
     logging.debug("starting DARE")
     dare = DareManager(dareconf)
     dare.start()
