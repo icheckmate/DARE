@@ -29,7 +29,7 @@ if __name__ == "__main__":
     conffile = sys.argv[1]
     
     logging.debug("starting DARE")
-    dare = DareManager(dareconf)
+    dare = DareManager(conffile)
     dare.start()
     logging.debug(" DARE Exec Done")
      

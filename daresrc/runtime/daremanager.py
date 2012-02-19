@@ -21,86 +21,139 @@ from daresrc.utils.cfgparser import CfgParser
 
 class DareManager(object):
     
-    def __init__(self, webupdate = False, webid = "", conffile="/path/to/conf/file"):
+    def __init__(self, conffile="/path/to/conf/file"):
         
-        
-        self.webupdater = Updater()
-        self.webupdate = webupdate
+        self.dare_conffile = conffile
+        self.updater = Updater()
 
         self.dare_id = "dare-" + str(uuid.uuid1())
-
-        self.dare_web_id = webid    
+ 
         self.darecfg = {}
-         
+
+        self.resource_units_repo = []
+        self.step_units_repo = []
+        self.step_units_order = {}
+        self.work_units_repo = []
+        self.data_units_repo = []
+      
         self.create_static_workflow()
 
         self.start()
 
-        self.wus_count = 0
-        self.dus_count = 0
-    
+
     def process_config_file(self):
-        dareconf = CfgParser(conffile)
-        info_dare = dareconf.SectionDict('main') 
+        self.dare_conf_full = CfgParser(self.dare_conffile)
+
+        self.dare_conf_main = self.dare_conf_full.SectionDict('main')
+
+        self.update_site_db = self.dare_conf_main.get('update_web_db', False)
+
+        self.dare_web_id = self.dare_conf_main.get('web_id', False)
 
     def create_static_workflow(self):
-        self.prepare_resourceunits()
+        self.process_config_file()
+        logging.debug("Done Reading DARE Config File")
+
+        self.prepare_resource_units()
         logging.debug("Done Creating Resource Units")
-        self.prepare_steps()
+        self.prepare_step_units()
         logging.debug("Done Creating Step Units")
-        self.prepare_subjobs()
+        self.prepare_work_units()
         logging.debug("Done Creating SubJobs")
-        self.prepare_dataunits()
+        self.prepare_data_units()
         logging.debug("Done Creating Data Units ")
 
 
-
-    def prepare_resourceunits(self, name = "qb", cfgfile = "resource.cfg", corecount = "8", walltime = "10"):        
+    def prepare_resource_units(self):        
         
-        rsrc_uuid = "resource-" + str(uuid.uuid1())
-        rcfp = CfgParser(cfgfile)                 
-        info_resource = rcfp.SectionDict(name)        
-        info_resource["Walltime"] = walltime
-        info_resource["TotalCoreCount"] = corecount
-        r1 = ResourceUnit()                    
-        r1.def_param(info_resource)
-                   
-        self.resources_repo.append(r1)
+        
+        resource_config_file = self.dare_conf_main.get('resource_config_file', 'default')
+         
+        if resource_config_file.lower() == 'default':
+           resource_config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'resource.cfg')
+      
+        resource_config_all = CfgParser(resource_config_file)
+
+        for k in range(0, len(self.dare_conf_main['used_resources'].split(','))):
+
+            resource_unit_uuid = "resource-%s-%s"%(k, self.dare_id)
+
+            info_resource = resource_config_all.SectionDict((self.dare_conf_main['used_resources'].split(',')[k]).strip())        
+            info_resource["walltime"] = self.dare_conf_main['walltime_resources'].split(',')[k].strip()
+            info_resource["total_core_count"] = self.dare_conf_main['size_resources'].split(',')[k].strip()
+            info_resource["name"] = resource_unit_uuid
+            r1 = ResourceUnit()                    
+            r1.define_param(info_resource)
+                    
+            self.resource_units_repo.append(r1)
 
 
-    def prepare_steps(self, name = "name", type = "data"):        
+    def prepare_step_units(self, name = "name", type = "data"):        
+        
+
+        self.steps_repo = []
         step_uuid = "step-" + str(uuid.uuid1())
+#        import pdb; pdb.set_trace()  
         
+        step_order_num = 0
+
+        resource_unit_uuid = "resource-%s-%s"%(step_order_num, self.dare_id)
+
         info_steps = {
                       "step_uuid":step_uuid,
-                      "name":name,
-                      "type":type , 
+                      "name":"working_dir_creation",
+                      "type":"" , 
                       "units":[]
                       }
+        self.step_units_order[step_order_num] = step_uuid 
         
-        self.steps_repo.append(info_steps)
+
+        for step in self.dare_conf_main['steps'].split(','):
+            resource_unit_uuid = "resource-%s-%s"%(step_order_num, self.dare_id)
+            step_order_num=step_order_num+1
+            info_steps = {
+                      "step_uuid":step_uuid,
+                      "name":step.strip(),
+                      "type":'' ,
+                      "status":'New', 
+                      "units":[]
+                      }
+            self.step_units_order[step_order_num] = step_uuid 
+
+            self.steps_repo.append(info_steps)
         
-        return step_uuid                
+    def get_step_id(name):
+
+        for i in  self.steps_repo:
+            if i.get("name", None) == name:
+               return i.step_uuid
+            else:
+               return "Unkown"
+                    
         
-    def prepare_subjobs(self, step = "s1", resource = "r1", conffile = "steps_filename",  add_args = ""):
-        
-        wu_uuid = "wu-" + str(uuid.uuid1())
-                
-        scfp    = CfgParser(resource_conf_file)
-        info_wu =  {
-                   "wu_id"   : wu_uuid,
-                   "step_id" : step.get_id(),
-                                      
-                   }        
-        
+    def prepare_work_units(self, step = "s1", resource = "r1", conffile = "steps_filename",  add_args = ""):
+
+        self.subjobs_repo = []
+        #add prepare work dir 
+
+        for wus in self.dare_conf_full.sections:
+            wu_uuid = "wu-" + str(uuid.uuid1())                
+            info_wu =  {
+                       "wu_id"   : wu_uuid,
+                       "step_id" : self.get_step_id(),
+                       }        
+            #read from wu info
+            #append it to wu repo
+            
         # add this wu to step
         self.steps[step.get_id()][units].append(wu_uuid)
         
         self.wus_repo.append(info_wu)
 
+    def workunit_resource_match():
+        pass
 
-
-    def prepare_dataunits(self, step = "0", filename ="file.txt", form_resource = "local", to_resource = "r1"):                
+    def prepare_data_units(self, step = "0", filename ="file.txt", form_resource = "local", to_resource = "r1"):                
         du_uuid = "du-" + str(uuid.uuid1())
         
         tourl = self.resources[to_resource]["ft_url"]
@@ -110,8 +163,8 @@ class DareManager(object):
                     "step_id" : step.get_id(),
                     "fromurl":filename,
                     "tourl":tourl,
-                    "type":"scp"
-                     "Status":"New"
+                    "type":"scp",
+                    "Status":"New"
                     }
 
         # add this du to step

@@ -22,9 +22,9 @@ try:
    from bigjob_dynamic.many_job import *
 
 except:
-    if os.getenv("BIGJOB_HOME")!=None:
+   if os.getenv("BIGJOB_HOME")!=None:
        PSTAR_HOME= os.getenv("BIGJOB_HOME")
-    sys.path.insert(0,BIGJOB_HOME)
+   sys.path.insert(0,BIGJOB_HOME)
 
    from bigjob import bigjob, subjob, description
    from bigjob_dynamic.many_job import *

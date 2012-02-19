@@ -17,25 +17,26 @@ class ResourceUnit(DareUnit):
      
     def __init__(self):          
         self.type = "resources"
-        self.UnitInfo = {}
+        self.unitinfo = {}
         
         
     def define_param(self, info_resource):    
         
-        self.UnitInfo= {            
-            "name" : info_resource["name"], 
-            "type" : "resource", 
-            "resource_url" : info_resource["resource_url"], 
-            "processes_per_host" : info_resource["cores_per_node"], 
-            "allocation" : info_resource["allocation"], 
-            "queue" : info_resource["queue"],
-            "userproxy" : info_resource["userproxy"], 
-            "working_directory" : info_resource["working_directory"],
-            "input_directory" :  info_resource["input_directory"],
-            "filetransfer_url" : resource_conf["filetransfer_url"],  
-            "walltime" : info_resource["walltime"],
-            "total_core_count" :  info_resource["total_core_count"]
-            }
+        self.unitinfo = {"resource_url" : info_resource["resource_url"], 
+                        "processes_per_host" : info_resource["cores_per_node"], 
+                        "allocation" : info_resource["allocation"], 
+                        "queue" : info_resource["queue"],
+                        "userproxy" : info_resource["userproxy"], 
+                        "working_directory" : info_resource["working_directory"],
+                        "input_directory" :  info_resource["input_directory"],
+                        "walltime" : info_resource["walltime"],
+                        "total_core_count" :  info_resource["total_core_count"]
+                        }
+
+        self.extrainfo = {"filetransfer_url" : info_resource["filetransfer_url"],  
+                          "name" : info_resource["name"], 
+                          "type" : "resource", 
+                           }
         
     
     def get_status(self):

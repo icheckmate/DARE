@@ -3,14 +3,29 @@ steps = hello_1, hello_2, hello_3
 jobid = 1
 webupdate= False
 
+used_resources = localhost,localhost
+size_resources = 1,1     
+walltime_resources= 10,10
+
+resource_config_file = default
+hello_workflow_cfg_file = default
+
+
 [wus_1]
 step = hello_1
 wu_type = echo_hello
 diff_inputs = "hello", "world", "hello_world"
-
+transfer_inputs = False
 
 [wus_2]
 step = hello_2
+wu_type = echo_hello
+diff_inputs = "bye", "world", "bye_world"
+arg_2 = ""
+
+
+[wus_2]
+step = hello_3
 wu_type = echo_hello
 diff_inputs = "bye", "world", "bye_world"
 arg_2 = ""

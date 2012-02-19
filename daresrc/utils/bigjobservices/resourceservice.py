@@ -22,9 +22,9 @@ try:
    from bigjob_dynamic.many_job import *
 
 except:
-    if os.getenv("BIGJOB_HOME")!=None:
+   if os.getenv("BIGJOB_HOME")!=None:
        PSTAR_HOME= os.getenv("BIGJOB_HOME")
-    sys.path.insert(0,BIGJOB_HOME)
+   sys.path.insert(0,BIGJOB_HOME)
 
    from bigjob import bigjob, subjob, description
    from bigjob_dynamic.many_job import *
@@ -55,7 +55,7 @@ class ResourceService(object):
         print "Create Dynamic BigJob Service "
         self.mjs = many_job_service(self.resource_units_list, self.COORDINATION_URL)
 
-   def add_resource_to_manyjob_service(self, resource_dictionary):
+    def add_resource_to_manyjob_service(self, resource_dictionary):
        # Dynamic BigJob add resources at runtime
        # if more than 30 s - add additional resource
        if time.time()- self.starttime > 10 and self.add_additional_resources==True:
@@ -63,7 +63,7 @@ class ResourceService(object):
                 self.mjs.add_resource(resource_dictionary)
                 self.add_additional_resources=False  
 
-   def remove_resource_to_manyjob_service(self):
+    def remove_resource_to_manyjob_service(self):
        # remove resources from dynamic bigjob
        if (time.time()-self.starttime > 15 and remove_additional_resources==True):
            bj_list = self.mjs.get_resources()
