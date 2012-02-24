@@ -19,11 +19,13 @@ class StepUnit(DareUnit):
     
     def define_param(self, step_info):
         self.UnitInfo = {        
-            "step_name": step_info["name"],
-            "step_type": step_info["type"],
-            "step_order_num": step_info["order_num"],
-            "step_uuid":  step_info["step_uuid"],
-            "step_units":  step_info["units"],        
+            "step_uuid": step_info["step_uuid"],
+            "name": step_info["name"],
+            "status": step_info["status"],
+            "work_units":  step_info["work_units"],
+            "transfer_input_data_units":  step_info["transfer_input_data_units"],        
+            "transfer_output_data_units":  step_info["transfer_output_data_units"],        
+
         }
 
          

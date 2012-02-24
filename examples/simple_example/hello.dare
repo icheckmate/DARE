@@ -15,17 +15,17 @@ walltime= 10
 [hello_1]
 step_name = hello_1
 wu_type = echo_hello
+step_cfg_file = default
 input_names = "hello", "world", "hello_world"
 #/path/to/file1, /path/to/file2
 transfer_inputs = False
-step_cfg_file = default
 #/path/to/step.cfg
 
 [hello_2]
 step_name = hello_2
-after_steps = hello_1, hello_3
+start_after_steps = hello_1, hello_3
 wu_type = echo_hello
-diff_inputs = "bye", "world", "bye_world"
+input_names = "bye", "world", "bye_world"
 arg_2 = ""
 step_cfg_file = default
 #/path/to/step.cfg
@@ -34,7 +34,7 @@ step_cfg_file = default
 step_name = hello_3
 after_steps = hello_1
 wu_type = echo_hello
-diff_inputs = "bye", "world", "bye_world"
+input_names = "bye", "world", "bye_world"
 arg_2 = ""
 step_cfg_file = default
 #step_conf = 
