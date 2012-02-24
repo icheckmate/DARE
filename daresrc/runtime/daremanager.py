@@ -42,12 +42,10 @@ class DareManager(object):
 
 
     def process_config_file(self):
+    
         self.dare_conf_full = CfgParser(self.dare_conffile)
-
         self.dare_conf_main = self.dare_conf_full.SectionDict('main')
-
         self.update_site_db = self.dare_conf_main.get('update_web_db', False)
-
         self.dare_web_id = self.dare_conf_main.get('web_id', False)
 
     def create_static_workflow(self):
@@ -65,31 +63,34 @@ class DareManager(object):
 
 
     def prepare_resource_units(self):        
-        
-        
+              
         resource_config_file = self.dare_conf_main.get('resource_config_file', 'default')
-         
-        if resource_config_file.lower() == 'default':
-           resource_config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'resource.cfg')
-      
-        resource_config_all = CfgParser(resource_config_file)
 
-        for k in range(0, len(self.dare_conf_main['used_resources'].split(','))):
 
-            resource_unit_uuid = "resource-%s-%s"%(k, self.dare_id)
+        for resource in self.dare_conf_main['used_resources'].split(','):
+            resource =  resource.strip()
+            logging.debug("preparing resource: %s"%resource)
+            resource_info_from_main_cfg = self.dare_conf_full.SectionDict(resource)
 
-            info_resource = resource_config_all.SectionDict((self.dare_conf_main['used_resources'].split(',')[k]).strip())        
-            info_resource["walltime"] = self.dare_conf_main['walltime_resources'].split(',')[k].strip()
-            info_resource["total_core_count"] = self.dare_conf_main['size_resources'].split(',')[k].strip()
+            resource_config_file = resource_info_from_main_cfg.get('resource_config_file', "undefined_resource_file")
+             
+            if resource_config_file.lower() == 'default' or resource_config_file.lower() == 'undefined_resource_file':
+                resource_config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'resource.cfg')                
+
+            resource_config_from_db = CfgParser(resource_config_file)
+            info_resource = resource_config_from_db.SectionDict(resource)        
+
+            resource_unit_uuid = "resource-%s-%s"%(resource, self.dare_id) 
+            info_resource["walltime"] = int(resource_info_from_main_cfg['walltime'])
+            info_resource["total_core_count"] = int(resource_info_from_main_cfg['total_core_count'])
             info_resource["name"] = resource_unit_uuid
             r1 = ResourceUnit()                    
-            r1.define_param(info_resource)
-                    
+            r1.define_param(info_resource) #check for sufficient info and abort if error.
+
             self.resource_units_repo.append(r1)
 
 
     def prepare_step_units(self, name = "name", type = "data"):        
-        
 
         self.steps_repo = []
         step_uuid = "step-" + str(uuid.uuid1())
@@ -105,9 +106,9 @@ class DareManager(object):
                       "type":"" , 
                       "units":[]
                       }
+
         self.step_units_order[step_order_num] = step_uuid 
         
-
         for step in self.dare_conf_main['steps'].split(','):
             resource_unit_uuid = "resource-%s-%s"%(step_order_num, self.dare_id)
             step_order_num=step_order_num+1
@@ -147,7 +148,6 @@ class DareManager(object):
             
         # add this wu to step
         self.steps[step.get_id()][units].append(wu_uuid)
-        
         self.wus_repo.append(info_wu)
 
     def workunit_resource_match():
@@ -169,7 +169,6 @@ class DareManager(object):
 
         # add this du to step
         self.steps[step][units].append(wu_uuid)        
-        
         self.dus_repo.append(info_du)
 
     def start(self):         
