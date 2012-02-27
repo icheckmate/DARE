@@ -8,16 +8,19 @@ __license__   = "MIT"
 import uuid
 import os
 import sys
+import time
 
 from daresrc import logging
-
-from daresrc.utils.updater import Updater
 
 from daresrc.utils.dareunits import DataUnit, StepUnit, ResourceUnit, WorkUnit
 from daresrc.utils.bigjobservices import ResourceService, SubjobService
 from daresrc.utils.data import Data
 from daresrc.utils.cfgparser import CfgParser
 
+from daresrc.utils.updater import Updater
+
+
+COORDINATION_URL = "advert//:localhost"
 
 
 class DareManager(object):
@@ -25,7 +28,7 @@ class DareManager(object):
     def __init__(self, conffile="/path/to/conf/file"):
         
         self.dare_conffile = conffile
-        self.updater = Updater()
+
 
         self.dare_id = "dare-" + str(uuid.uuid1())
  
@@ -39,26 +42,25 @@ class DareManager(object):
         self.create_static_workflow()
 
         self.start()
+
     def start(self):         
         
         #create multiple manyjobs
         logging.debug("Create Compute Engine service ")
 
-        cmps = Compute()
-        cmps.ComputeService(self.resource_repo)
-        data = Data()
-        total_number_of_jobs=0
+        cmps = ResourceService(self.resource_units_repo, COORDINATION_URL)
+        #data = Data()
+        #total_number_of_jobs=0
 
         ### run the steps
-        for STEP in self.steps:
+        for step in self.step_units_repo:
             starttime = time.time()
 
-            #job started update status
-            self.webupdater.update_status(self.webupdate, self.dare_web_id,\
-                                          "Running"," In step " + str(STEP.get_position))
+            #job started update status 
+            step.change_status(self.updater,'Running')
             
             p = []
-          
+
             if STEP.get_type() == "Compute":
                 
                 for unit in STEP.get_units():
@@ -78,7 +80,7 @@ class DareManager(object):
             runtime = time.time()-starttime
 
             #all jobs done update status
-            self.webupdater.update_status(self.webupdate, self.DAREJOB["jobid"], "Done","")
+            self.updater.update_status("Done")
 
 
 
@@ -89,6 +91,7 @@ class DareManager(object):
         self.dare_conf_main = self.dare_conf_full.SectionDict('main')
         self.update_site_db = self.dare_conf_main.get('update_web_db', False)
         self.dare_web_id = self.dare_conf_main.get('web_id', False)
+        self.updater = Updater(self.update_site_db, self.dare_web_id)
 
     def create_static_workflow(self):
         self.process_config_file()
@@ -98,7 +101,7 @@ class DareManager(object):
 
         self.prepare_step_units()
         self.prepare_work_units()
-        self.prepare_data_units()
+        #self.prepare_data_units()
 
 
     def prepare_resource_units(self):        
@@ -149,7 +152,8 @@ class DareManager(object):
                start_after_steps = ["step-%s-%s"%(k.strip(),self.dare_id) for k in step_info_from_main_cfg.get('start_after_steps').split(',')]
             step_unit_uuid = "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id)
             info_steps = {
-                      "step_uuid":step_unit_uuid,
+                      "step_id":step_unit_uuid,
+                      "dare_job_id":self.dare_web_id ,
                       "name":step_info_from_main_cfg.get('step_name').strip(),
                       "status":'New', 
                       "start_after_steps":start_after_steps ,
@@ -186,37 +190,46 @@ class DareManager(object):
             step_cfg_file = step_info_from_main_cfg.get('step_cfg_file', 'undefined_step_file').strip()
 
             if step_cfg_file.lower() == 'default' or step_cfg_file.lower() == 'undefined_step_file':
-                step_cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'echo_hello.cfg')    
+                step_cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'echo_hello.wu')    
 
+            # check if file exists
             wu_conf_full = CfgParser(step_cfg_file) 
 
+            print step_cfg_file
             
             for input_file in step_info_from_main_cfg.get('input_names').split(','):
 
                 input_file = input_file.strip()
                 wu_uuid = "wu-%s"%(uuid.uuid1(),)
-                      
+                wu_working_directory = '/tmp/'      
                 info_wu =  {"wu_id"   : wu_uuid,
                             "step_id" : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
+                            "resource" : 'any',
+
                             "arguments" : input_file,
                             "after_units":[],
                             "wu_desc" : wu_conf_full.SectionDict(step_info_from_main_cfg['wu_type']),
+                            "output": os.path.join(wu_working_directory , "dare-wu-stdout-"+ wu_uuid +".txt"),
+                            "error": os.path.join(wu_working_directory , "dare-wu-stderr-"+ wu_uuid +".txt" ),
+                            "working_directory": ''
                            }  
       
                 wu = WorkUnit()
                 wu.define_param(info_wu)
                 self.work_units_repo.append(wu)
-
-            #read from wu info
-            #append it to wu repo
-            
-        # add this wu to step
-        self.steps[step.get_id()][units].append(wu_uuid)
-        self.wus_repo.append(info_wu)
+                # add this wu to step
+                self.add_wu_to_step(info_wu['step_id'], wu_uuid)
 
         logging.debug("Done preparing Work Units ")
 
+    def add_wu_to_step(self, step_id,wu_uuid):
 
+        for i in  range(0, len(self.step_units_repo)):        
+            if self.step_units_repo[i].get_step_id() == step_id:
+                self.step_units_repo[i].add_work_unit(wu_uuid)
+
+
+		        
     def prepare_data_units(self, step = "0", filename ="file.txt", form_resource = "local", to_resource = "r1"):                
         du_uuid = "du-" + str(uuid.uuid1())
         

@@ -6,6 +6,8 @@
 
 [echo_hello]
 executable = /bin/date
+spmd_variation = single
+number_of_processes = 1
 arg_1 = True
 arg_1_key = -a
 #default_value

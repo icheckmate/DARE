@@ -19,6 +19,7 @@ class WorkUnit(DareUnit):
         self.UnitInfo = {}        
          
     def define_param(self, wu_info):
+
         """
         sj = description()
         sj.executable =  sj_desc['executable']
@@ -30,23 +31,31 @@ class WorkUnit(DareUnit):
         sj.output= sj_desc['output']
         sj.error = sj_desc['error']
         """
+
         self.UnitInfo = {
+           # for dare   
+            "resource" : wu_info["resource"],
+            "appname" : "simple",
             "type" : "compute",
-            "name" : wu_info["name"],
             "step_id" : wu_info["step_id"],
             "wu_id" : wu_info["wu_id"],  
-            "executable" : wu_info["wu_desc"]["executble"],
-            "number_of_processes" : wu_info["number_of_processes"],
-            "spmd_variation" : wu_info["spmd_variation"],
-            "environment" : wu_info["environment"],    
-            "output" : os.path.join(wu_info["working_directory"], "stdout-"+ wu_info["wu_id"] +".txt"),
-            "error" : os.path.join(wu_info["working_directory"], "stderr-"+ wu_info["wu_id"] +".txt" ),
-            "appname" : "simple",
-    
-             #varrying
-            "resource" : resource,
-            "working_directory" : working_directory,
-            "arguments" : args
+
+            #for saga/BJ
+            "executable" : wu_info["wu_desc"]["executable"],
+            "number_of_processes" : wu_info["wu_desc"]["number_of_processes"],
+            "spmd_variation" : wu_info["wu_desc"]["spmd_variation"],
+            "output" : wu_info["output"],
+            "error" : wu_info["error"],
+
+            #varrying
+            "working_directory" : wu_info["working_directory"],
+
+            # processes these args
+            "arguments": '',
+            "environment" : '',    
+
+
+
         }
        
     

@@ -20,16 +20,15 @@ sys.path.insert(0,DARENGS_HOME)
 
 
 class Updater():
-    def __init__(self):
+    def __init__(self,check,jobid):
         try:
             import darengs.lib.ModelConnector as jobmodel_helper
-            load_update_env = "true"
+            self.load_update_env = "true"
         except:
-            load_update_env = "false"
+            self.load_update_env = "false"
 
-    def update_status(self,check,jobid,status, detail_status=""):
-        if check == "true":
+    def update_status(self,status, detail_status=""):
+        if self.load_update_env:
             jobmodel_helper.update_job_detail_status(jobid, detail_status)
             jobmodel_helper.update_job_status(jobid, status)
-        else:
-            pass
+
