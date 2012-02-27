@@ -11,18 +11,22 @@ import os
 
 from daresrc.api import DareUnit
 
+
 #import saga
 
 class ResourceUnit(DareUnit):
      
     def __init__(self):          
         self.type = "resources"
-        self.unitinfo = {}
+        self.UnitInfo = {}
         
         
     def define_param(self, info_resource):    
         
-        self.unitinfo = {"resource_url" : info_resource["resource_url"], 
+        self.UnitInfo = {
+                        "ru_id" : 'test', 
+                        
+                        "resource_url" : info_resource["resource_url"], 
                         "processes_per_host" : info_resource["cores_per_node"], 
                         "allocation" : info_resource["allocation"], 
                         "queue" : info_resource["queue"],
@@ -41,6 +45,20 @@ class ResourceUnit(DareUnit):
     
     def get_status(self):
         pass
-     
+
+    def get_desc(self):
+
+        ru_list_item = {}
+        ru_list_item['resource_url'] = self.UnitInfo['resource_url']
+        ru_list_item['processes_per_host'] = self.UnitInfo['processes_per_host']
+        ru_list_item['allocation'] = self.UnitInfo['allocation']
+        ru_list_item['queue'] = self.UnitInfo['queue']
+        ru_list_item['working_directory'] = self.UnitInfo['working_directory']
+        ru_list_item['input_directory'] = self.UnitInfo['input_directory']
+        ru_list_item['walltime'] = self.UnitInfo['walltime']
+        ru_list_item['number_of_processes'] = self.UnitInfo['total_core_count']
+
+        return ru_list_item
+
     def get_param(self):
         pass

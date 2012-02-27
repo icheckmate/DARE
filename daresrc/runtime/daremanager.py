@@ -20,7 +20,7 @@ from daresrc.utils.cfgparser import CfgParser
 from daresrc.utils.updater import Updater
 
 
-COORDINATION_URL = "advert//:localhost"
+COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
 
 
 class DareManager(object):
@@ -44,46 +44,47 @@ class DareManager(object):
         self.start()
 
     def start(self):         
+        try:
+           #create multiple manyjobs
+            logging.debug("Create Compute Engine service ")
+
+            resources_service = ResourceService(self.resource_units_repo, COORDINATION_URL)
+
+            subjobs_service =  SubjobService(resources_service)
+
+            data_service = Data()
+
         
-        #create multiple manyjobs
-        logging.debug("Create Compute Engine service ")
+            ### run the steps
+            for step in self.step_units_repo:
+                starttime = time.time()
 
-        cmps = ResourceService(self.resource_units_repo, COORDINATION_URL)
-        #data = Data()
-        #total_number_of_jobs=0
-
-        ### run the steps
-        for step in self.step_units_repo:
-            starttime = time.time()
-
-            #job started update status 
-            step.change_status(self.updater,'Running')
+                #job started update status 
+                step.change_status(self.updater,'Running')
             
-            p = []
+                p = []
 
-            if STEP.get_type() == "Compute":
-                
-                for unit in STEP.get_units():
-                    
-                    wu = cmps.submit_wu(unit)
-                    wus_count = wus_count +1
+                for du_id in step.UnitInfo['transfer_input_data_units']:
+                        p = data_service.submit_filetransfer(unit)
+                        wus_count = wus_count +1
+                data_service.wait_for_transfers()
 
-                cmps.wait_for_wus()
-            
-            else:
-                for unit in STEP.get_units():
-                    p = data.submit_filetransfer(unit)
-                    wus_count = wus_count +1
+                for wu_id in step.UnitInfo['work_units']:                    
+                        wu = subjobs_service.submit_sj(self.get_sj_desc(wu_id))
+                subjobs_service.wait_for_subjobs()
 
-                data.wait_for_transfers()
+                for du_id in step.UnitInfo['transfer_output_data_units']:
+                        p = data_service.submit_filetransfer(unit)
+                        wus_count = wus_count +1            
+                data_service.wait_for_transfers()
 
-            runtime = time.time()-starttime
+                runtime = time.time()-starttime
 
-            #all jobs done update status
-            self.updater.update_status("Done")
+                #all jobs done update status
+                step.change_status(self.updater,'Done')
 
-
-
+        except KeyboardInterrupt:
+            resources_service.end_manyjob_service()
 
     def process_config_file(self):
     
@@ -148,12 +149,14 @@ class DareManager(object):
                 logging.debug("step description section not found for step %s"%step)  
                 sys.exit()    
             start_after_steps = []
+            
             if step_info_from_main_cfg.get('start_after_steps'):
                start_after_steps = ["step-%s-%s"%(k.strip(),self.dare_id) for k in step_info_from_main_cfg.get('start_after_steps').split(',')]
+
             step_unit_uuid = "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id)
             info_steps = {
                       "step_id":step_unit_uuid,
-                      "dare_job_id":self.dare_web_id ,
+                      "dare_web_id":self.dare_web_id ,
                       "name":step_info_from_main_cfg.get('step_name').strip(),
                       "status":'New', 
                       "start_after_steps":start_after_steps ,
@@ -229,7 +232,17 @@ class DareManager(object):
                 self.step_units_repo[i].add_work_unit(wu_uuid)
 
 
-		        
+    def get_sj_desc(self,wu_id):
+
+        for wu in  self.work_units_repo:        
+            if wu.get_wu_id() == wu_id:
+                return wu.get_desc()
+                    
+
+    def workunit_resource_match():
+        pass
+
+
     def prepare_data_units(self, step = "0", filename ="file.txt", form_resource = "local", to_resource = "r1"):                
         du_uuid = "du-" + str(uuid.uuid1())
         
@@ -248,15 +261,6 @@ class DareManager(object):
         self.steps[step][units].append(wu_uuid)        
         self.dus_repo.append(info_du)
 
-    def get_step_id(name):
-
-        for i in  self.steps_repo:
-            if i.get("name", None) == name:
-               return i.step_uuid
-            else:
-               return "Unkown"
-                    
-
-    def workunit_resource_match():
+    def dare_cancle(self):
         pass
 

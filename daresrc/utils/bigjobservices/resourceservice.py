@@ -20,7 +20,7 @@ import traceback
 try:
    from bigjob import bigjob, subjob, description
    from bigjob_dynamic.many_job import *
-
+   traceback.print_exc(file=sys.stdout)
 except:
    if os.getenv("BIGJOB_HOME")!=None:
        PSTAR_HOME= os.getenv("BIGJOB_HOME")
@@ -38,10 +38,18 @@ class ResourceService(object):
         self.subjobs = {}
         self.starttime  = time.time()
         #Flags for controlling dynamic BigJob
-        self.resource_units_list = resource_units_list
+        self.resource_units_list = self.prepare_list(resource_units_list)
         self.COORDINATION_URL = COORDINATION_URL
         self.add_additional_resources=True
         self.remove_additional_resources=False
+        self.start_manyjob_service()
+
+    def prepare_list(self, resource_units_list):
+        ru_list = []
+        for ru in resource_units_list:
+            ru_list.append(ru.get_desc())
+
+        return ru_list
 
     def start_manyjob_service(self):
 
@@ -53,6 +61,8 @@ class ResourceService(object):
         resource_list.append(resource_dictionary)
         """    
         print "Create Dynamic BigJob Service "
+
+        
         self.mjs = many_job_service(self.resource_units_list, self.COORDINATION_URL)
 
     def add_resource_to_manyjob_service(self, resource_dictionary):
@@ -72,10 +82,16 @@ class ResourceService(object):
                mjs.remove_resource(bj_list[0])
            remove_additional_resources=False
 
+    def submit_subjob(self, sj_desc):
+    
+        subjob =  self.mjs.create_job(sj_desc)
+        subjob.run()
+        print "Submited sub-job "        
+        return subjob
 
     def end_manyjob_service():
         try:
-            mjs.cancel()
+            self.mjs.cancel()
         except:
-            pass
+            traceback.print_exc(file=sys.stdout)
 

@@ -32,6 +32,12 @@ except:
 
 COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
 
+def has_finished(state):
+        state = state.lower()
+        if state=="done" or state=="failed" or state=="canceled":
+            return True
+        else:
+            return False
 
 class SubjobService(object):
     
@@ -48,7 +54,10 @@ class SubjobService(object):
     def submit_sj(self, sj_desc):
        # print "[INFO]", wu_desc_conf
         self.NUMBER_JOBS = self.NUMBER_JOBS + 1
-        subjob = self.resourceservice.create_job(sj_desc)
+        subjob = self.resourceservice.submit_subjob(sj_desc)
+        self.jobs.append(subjob)
+        self.job_start_times[subjob]=time.time()
+        self.job_states[subjob] = subjob.get_state()
 
     def reset(self):
         self.NUMBER_JOBS = 0
@@ -69,12 +78,12 @@ class SubjobService(object):
                 result_map[state] = result_map[state]+1
                 #print "counter: " + str(i) + " job: " + str(jobs[i]) + " state: " + state
                 if old_state != state:
-                    print "Job " + str(jself.obs[i]) + " changed from: " + old_state + " to " + state
+                    print "Job " + str(self.jobs[i]) + " changed from: " + old_state + " to " + state
                 if old_state != state and has_finished(state)==True:
                     print "Job: " + str(self.jobs[i]) + " Runtime: " + str(time.time()-self.job_start_times[self.jobs[i]]) + " s."
                 if has_finished(state)==True:
                     finish_counter = finish_counter + 1
-                job_states[jobs[i]]=state
+                self.job_states[self.jobs[i]]=state
                                 
             print "Current states: " + str(result_map) 
             time.sleep(5)

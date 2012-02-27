@@ -10,24 +10,28 @@ import os
 import sys
 
 if os.getenv("DARENGS_HOME")!=None:
-    DARENG_HOME= os.getenv("DARENGS_HOME")
+    DARE_WEB_LIB= os.getenv("DARENGS_HOME")
 else:
-    DARENGS_HOME = "/home/cctsg/software/DARE-NGS/"
+    DARE_WEB_LIB = "/Users/Sharath/workspace/projects/DARE-CACTUS/darecactus"
+ 
+
+sys.path.insert(0, os.path.join(DARE_WEB_LIB, 'lib'))
+import ormconnector as jobmodel_helper
 
 
-sys.path.insert(0,DARENGS_HOME)
 
 
 
 class Updater():
     def __init__(self,check,jobid):
         try:
-            import darengs.lib.ModelConnector as jobmodel_helper
-            self.load_update_env = "true"
+            jobmodel_helper.update_job_detail_status('jobid', 'detail_status')
+            self.load_update_env = True
         except:
-            self.load_update_env = "false"
+            self.load_update_env = False
 
     def update_status(self,status, detail_status=""):
+	
         if self.load_update_env:
             jobmodel_helper.update_job_detail_status(jobid, detail_status)
             jobmodel_helper.update_job_status(jobid, status)

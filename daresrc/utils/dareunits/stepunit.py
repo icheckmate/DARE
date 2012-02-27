@@ -21,7 +21,7 @@ class StepUnit(DareUnit):
     def define_param(self, step_info):
         self.UnitInfo = {        
             "step_id": step_info["step_id"],
-            "dare_job_id":step_info["dare_job_id"],
+            "dare_web_id":step_info["dare_web_id"],
             "name": step_info["name"],
             "status": step_info["status"],
             "work_units":  step_info["work_units"],
@@ -38,7 +38,7 @@ class StepUnit(DareUnit):
     
     def change_status(self, updater,status):        
         self.UnitInfo['status'] =  status
-        updater.update_status( self.dare_web_id, status, self.UnitInfo['name'])
+        updater.update_status( self.UnitInfo['dare_web_id'], "%s in step %s"%(status, self.UnitInfo['name']))
 
     def get_status(self):
         return self.UnitInfo['status'] 
