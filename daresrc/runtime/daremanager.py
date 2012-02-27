@@ -174,7 +174,7 @@ class DareManager(object):
         #add prepare work dir 
 
         for step in self.dare_conf_main['steps'].split(','):
-            logging.debug("Preparing Step Units: %s"%step)
+            logging.debug("Preparing Work Units: %s"%step)
 
             try:
                 step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
@@ -182,10 +182,14 @@ class DareManager(object):
                 logging.debug("step description section not found for step %s"%step)  
                 sys.exit()    
 
+
             step_cfg_file = step_info_from_main_cfg.get('step_cfg_file', 'undefined_step_file').strip()
 
             if step_cfg_file.lower() == 'default' or step_cfg_file.lower() == 'undefined_step_file':
                 step_cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'echo_hello.cfg')    
+
+            wu_conf_full = CfgParser(step_cfg_file) 
+
             
             for input_file in step_info_from_main_cfg.get('input_names').split(','):
 
@@ -193,8 +197,15 @@ class DareManager(object):
                 wu_uuid = "wu-%s"%(uuid.uuid1(),)
                       
                 info_wu =  {"wu_id"   : wu_uuid,
-                            "step_id" : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id)
-                            }        
+                            "step_id" : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
+                            "arguments" : input_file,
+                            "after_units":[],
+                            "wu_desc" : wu_conf_full.SectionDict(step_info_from_main_cfg['wu_type']),
+                           }  
+      
+                wu = WorkUnit()
+                wu.define_param(info_wu)
+                self.work_units_repo.append(wu)
 
             #read from wu info
             #append it to wu repo
@@ -202,6 +213,8 @@ class DareManager(object):
         # add this wu to step
         self.steps[step.get_id()][units].append(wu_uuid)
         self.wus_repo.append(info_wu)
+
+        logging.debug("Done preparing Work Units ")
 
 
     def prepare_data_units(self, step = "0", filename ="file.txt", form_resource = "local", to_resource = "r1"):                
@@ -233,3 +246,4 @@ class DareManager(object):
 
     def workunit_resource_match():
         pass
+

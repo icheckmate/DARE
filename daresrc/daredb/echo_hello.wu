@@ -4,28 +4,33 @@
 #__license__   = "MIT"
 
 
-[wu]
+[echo_hello]
 executable = /bin/date
-arg_1 = -a
+arg_1 = True
+arg_1_key = -a
 #default_value
-arg_1_val = 123
-arg_2 = -b
-#default_value
-arg_2_val = 
-arg_3  = ""
-arg_3_path = True 
-arg_4 = -o
-arg_4_val = arg_2.pin
-#the output filenam  is 
-is_out = arg_4
+arg_1_value = 123
+
+arg_2 = True
+arg_2_key = -b
+arg_2_val = True
+arg_3  = True
+arg_3_key = -c 
+
+arg_4 = True
+arg_4_key = -o
+arg_4_value = arg_2.pin
+#the output filename  is 
+out_arg_value = arg_4_value
+
 env_1  = True
-env_1_name = "PATH"
+env_1_key = "PATH"
 
 
 [machine_1]
 arg_3 = "/path/to/file"
-env_1 = "/usr/bin/"
+env_1_value = "/usr/bin/"
 
 [machine_2]
 arg_3 = "/path/to/file"
-env_1 = "/usr/bin/"
+env_1_value = "/usr/bin/"

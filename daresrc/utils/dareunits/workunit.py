@@ -33,9 +33,9 @@ class WorkUnit(DareUnit):
         self.UnitInfo = {
             "type" : "compute",
             "name" : wu_info["name"],
-            "step_name" : wu_info["step_name"],
+            "step_id" : wu_info["step_id"],
             "wu_id" : wu_info["wu_id"],  
-            "executable" : wu_info["executable"],
+            "executable" : wu_info["wu_desc"]["executble"],
             "number_of_processes" : wu_info["number_of_processes"],
             "spmd_variation" : wu_info["spmd_variation"],
             "environment" : wu_info["environment"],    
