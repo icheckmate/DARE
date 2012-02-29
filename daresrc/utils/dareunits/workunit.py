@@ -29,6 +29,7 @@ class WorkUnit(DareUnit):
             "step_id" : wu_info["step_id"],
             "wu_id" : wu_info["wu_id"],  
             "status": 'New',
+
             #for saga/BJ
             "executable" : wu_info["wu_desc"]["executable"],
             "number_of_processes" : wu_info["wu_desc"]["number_of_processes"],
@@ -43,10 +44,14 @@ class WorkUnit(DareUnit):
             "arguments": '',
             "environment" : '',    
 
-
-
         }
        
+    def prepare_arguments(self):
+        pass
+    
+    def prepare_environment(self):
+	    pass
+
     def get_desc(self):
 
         sj = description()

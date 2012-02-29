@@ -30,7 +30,7 @@ except:
    from bigjob_dynamic.many_job import *
 
 
-COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
+COORDINATION_URL = "redis://localhost:6379"
 
 class ResourceService(object):
 
@@ -89,7 +89,7 @@ class ResourceService(object):
         print "Submited sub-job "        
         return subjob
 
-    def end_manyjob_service():
+    def end_manyjob_service(self):
         try:
             self.mjs.cancel()
         except:

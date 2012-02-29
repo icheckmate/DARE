@@ -14,9 +14,11 @@ walltime= 10
 
 [hello_1]
 step_name = hello_1
+resource = 'localhost'
 wu_type = echo_hello
 step_cfg_file = default
-input_names = "hello", "world", "hello_world"
+arg_1_value = "hello", "world", "hello_world"
+arg_1_value_add_input_dir = True
 #/path/to/file1, /path/to/file2
 transfer_inputs = False
 #/path/to/step.cfg

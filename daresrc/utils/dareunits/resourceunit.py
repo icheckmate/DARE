@@ -22,10 +22,12 @@ class ResourceUnit(DareUnit):
         
         
     def define_param(self, info_resource):    
-        
+        self.id = info_resource["ru_id"]
+        self.name =  info_resource["name"]
+
         self.UnitInfo = {
-                        "ru_id" : 'test', 
-                        
+                        "ru_id" : info_resource["ru_id"], 
+                        "name" : info_resource["name"],
                         "resource_url" : info_resource["resource_url"], 
                         "processes_per_host" : info_resource["cores_per_node"], 
                         "allocation" : info_resource["allocation"], 
@@ -45,6 +47,9 @@ class ResourceUnit(DareUnit):
     
     def get_status(self):
         pass
+
+    def get_id(self):
+        return self.UnitInfo['step_id']
 
     def get_desc(self):
 

@@ -35,7 +35,11 @@ class DareManager(object):
         self.darecfg = {}
 
         self.resource_units_repo = []
+        self.resource_units_repo_new = {}
+             
         self.step_units_repo = []
+        self.step_units_repo_new = [] 
+
         self.work_units_repo = []
         self.data_units_repo = []
       
@@ -46,45 +50,63 @@ class DareManager(object):
     def start(self):         
         try:
            #create multiple manyjobs
-            logging.debug("Create Compute Engine service ")
-
+            logging.info("Create Compute Engine service ")
             resources_service = ResourceService(self.resource_units_repo, COORDINATION_URL)
-
             subjobs_service =  SubjobService(resources_service)
 
             data_service = Data()
-
         
             ### run the steps
             for step in self.step_units_repo:
-                starttime = time.time()
-
-                #job started update status 
-                step.change_status(self.updater,'Running')
-            
-                p = []
-
-                for du_id in step.UnitInfo['transfer_input_data_units']:
-                        p = data_service.submit_filetransfer(unit)
-                        wus_count = wus_count +1
-                data_service.wait_for_transfers()
-
-                for wu_id in step.UnitInfo['work_units']:                    
-                        wu = subjobs_service.submit_sj(self.get_sj_desc(wu_id))
-                subjobs_service.wait_for_subjobs()
-
-                for du_id in step.UnitInfo['transfer_output_data_units']:
-                        p = data_service.submit_filetransfer(unit)
-                        wus_count = wus_count +1            
-                data_service.wait_for_transfers()
-
-                runtime = time.time()-starttime
-
-                #all jobs done update status
-                step.change_status(self.updater,'Done')
-
+                if self.check_to_start_step(step):
+                    step = self.start_step(step)                    
         except KeyboardInterrupt:
             resources_service.end_manyjob_service()
+
+
+    def check_to_start_step(self, step):
+        flags = []
+        if step.get_status() == "New":  
+           for step_id in step.UnitInfo['dependent_steps']:
+               if self.step_id_status(step_id) == "Done":
+                  flags.append(True)
+               else:
+                  flags.append(False)
+        return False if False in flags else True
+    
+    def step_id_status(self, step_id):
+        for step in self.step_units_repo:
+            if step_id == step.get_step_id():             
+                return step.get_status
+        return False
+            
+    def start_step(self, step):
+
+        starttime = time.time()
+
+        #job started update status 
+        step.change_status(self.updater,'Running')
+    
+        p = []
+
+        for du_id in step.UnitInfo['transfer_input_data_units']:
+                p = data_service.submit_filetransfer(self.get_du_desc(du_id))
+        data_service.wait_for_transfers()
+
+        for wu_id in step.UnitInfo['work_units']:                    
+                wu = subjobs_service.submit_sj(self.get_sj_desc(wu_id))
+        subjobs_service.wait_for_subjobs()
+
+        for du_id in step.UnitInfo['transfer_output_data_units']:
+                p = data_service.submit_filetransfer(self.get_du_desc(du_id))
+        data_service.wait_for_transfers()
+
+        runtime = time.time()-starttime
+
+        #all jobs done update status
+        step.change_status(self.updater,'Done')     
+        
+        return step
 
     def process_config_file(self):
     
@@ -96,7 +118,7 @@ class DareManager(object):
 
     def create_static_workflow(self):
         self.process_config_file()
-        logging.debug("Done Reading DARE Config File")
+        logging.info("Done Reading DARE Config File")
 
         self.prepare_resource_units()
 
@@ -106,16 +128,17 @@ class DareManager(object):
 
 
     def prepare_resource_units(self):        
-        logging.debug("Starting to prepare Resource Units")
+        logging.info("Starting to prepare Resource Units")
               
         resource_config_file = self.dare_conf_main.get('resource_config_file', 'default')
 
-
         for resource in self.dare_conf_main['used_resources'].split(','):
             resource =  resource.strip()
-            logging.debug("Preparing Resource unit for  %s"%resource)
-            resource_info_from_main_cfg = self.dare_conf_full.SectionDict(resource)
+            resource_unit_uuid = "resource-%s-%s"%(resource, str(uuid.uuid1()))
 
+            logging.info("Preparing Resource unit for  %s"%resource)
+            resource_info_from_main_cfg = self.dare_conf_full.SectionDict(resource)
+            
             resource_config_file = resource_info_from_main_cfg.get('resource_config_file', "undefined_resource_file")
              
             if resource_config_file.lower() == 'default' or resource_config_file.lower() == 'undefined_resource_file':
@@ -124,29 +147,37 @@ class DareManager(object):
             resource_config_from_db = CfgParser(resource_config_file)
             info_resource = resource_config_from_db.SectionDict(resource)        
 
-            resource_unit_uuid = "resource-%s-%s"%(resource, self.dare_id) 
+            info_resource['ru_id'] = resource_unit_uuid
             info_resource["walltime"] = int(resource_info_from_main_cfg['walltime'])
             info_resource["total_core_count"] = int(resource_info_from_main_cfg['total_core_count'])
-            info_resource["name"] = resource_unit_uuid
-            r1 = ResourceUnit()                    
-            r1.define_param(info_resource) #check for sufficient info and abort if error.
+            info_resource["name"] = resource
 
-            self.resource_units_repo.append(r1)
+            ru = ResourceUnit()                    
+            ru.define_param(info_resource) #check for sufficient info and abort if error.
 
-        logging.debug("Done preparing Resource Units ")
+            self.resource_units_repo.append(ru)
+            self.resource_units_repo_new['resource_unit_uuid'] = ru
+        logging.info("Done preparing Resource Units ")
 
+    def find_resource_id(self, name = ''):
+        for ru in self.resource_units_repo:
+           if name and name.strip() == ru.name:
+              return  ru.id
+        return  ru.id
+                      
+       
     def prepare_step_units(self):        
-        logging.debug("Starting to prepare Step Units ")
+        logging.info("Starting to prepare Step Units ")
         
         #TODO:: check for same names
         
         for step in self.dare_conf_main['steps'].split(','):
-            logging.debug("Preparing Step Units: %s"%step)
+            logging.info("Preparing Step Units: %s"%step)
 
             try:
                 step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
             except:
-                logging.debug("step description section not found for step %s"%step)  
+                logging.info("step description section not found for step %s"%step)  
                 sys.exit()    
             start_after_steps = []
             
@@ -158,7 +189,11 @@ class DareManager(object):
                       "step_id":step_unit_uuid,
                       "dare_web_id":self.dare_web_id ,
                       "name":step_info_from_main_cfg.get('step_name').strip(),
-                      "status":'New', 
+                      "status":'New',
+
+                      "resource": self.find_resource_id(step_info_from_main_cfg.get('resource')),
+
+                      "dependent_steps": step_info_from_main_cfg.get('start_after_steps', '').split(','),
                       "start_after_steps":start_after_steps ,
                       "work_units":[],
                       "transfer_input_data_units":[],
@@ -168,25 +203,25 @@ class DareManager(object):
             su = StepUnit()
             su.define_param(info_steps)
             self.step_units_repo.append(su)
-
+            self.step_units_repo_new[step_unit_uuid] = su
 #        import pdb; pdb.set_trace()  
 
-        logging.debug("Done preparing Step Units ")
+        logging.info("Done preparing Step Units ")
 
         
     def prepare_work_units(self):
         self.work_units_repo = []
-        logging.debug("Starting to prepare Work Units ")
+        logging.info("Starting to prepare Work Units ")
 
         #add prepare work dir 
 
         for step in self.dare_conf_main['steps'].split(','):
-            logging.debug("Preparing Work Units: %s"%step)
+            logging.info("Preparing Work Units: %s"%step)
 
             try:
                 step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
             except:
-                logging.debug("step description section not found for step %s"%step)  
+                logging.info("step description section not found for step %s"%step)  
                 sys.exit()    
 
 
@@ -208,13 +243,16 @@ class DareManager(object):
                 info_wu =  {"wu_id"   : wu_uuid,
                             "step_id" : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
                             "resource" : 'any',
-
+                            
                             "arguments" : input_file,
                             "after_units":[],
                             "wu_desc" : wu_conf_full.SectionDict(step_info_from_main_cfg['wu_type']),
                             "output": os.path.join(wu_working_directory , "dare-wu-stdout-"+ wu_uuid +".txt"),
                             "error": os.path.join(wu_working_directory , "dare-wu-stderr-"+ wu_uuid +".txt" ),
-                            "working_directory": ''
+                            "working_directory": '',
+                            #process thes
+                            "wu":''
+
                            }  
       
                 wu = WorkUnit()
@@ -223,7 +261,7 @@ class DareManager(object):
                 # add this wu to step
                 self.add_wu_to_step(info_wu['step_id'], wu_uuid)
 
-        logging.debug("Done preparing Work Units ")
+        logging.info("Done preparing Work Units ")
 
     def add_wu_to_step(self, step_id,wu_uuid):
 
