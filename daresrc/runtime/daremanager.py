@@ -20,7 +20,7 @@ from daresrc.utils.cfgparser import CfgParser
 from daresrc.utils.updater import Updater
 
 
-COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:2525"
+COORDINATION_URL = "redis://127.0.0.1:6379"
 
 
 class DareManager(object):
@@ -38,7 +38,7 @@ class DareManager(object):
         self.resource_units_repo_new = {}
              
         self.step_units_repo = []
-        self.step_units_repo_new = [] 
+        self.step_units_repo_new = {} 
 
         self.work_units_repo = []
         self.data_units_repo = []
@@ -233,9 +233,9 @@ class DareManager(object):
             # check if file exists
             wu_conf_full = CfgParser(step_cfg_file) 
 
-            print step_cfg_file
+            #print step_cfg_file
             
-            for input_file in step_info_from_main_cfg.get('input_names').split(','):
+            for input_file in step_info_from_main_cfg.get('input_names', '').split(','):
 
                 input_file = input_file.strip()
                 wu_uuid = "wu-%s"%(uuid.uuid1(),)
