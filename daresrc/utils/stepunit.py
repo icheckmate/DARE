@@ -8,9 +8,9 @@ __license__   = "MIT"
 
 import os
 
-from daresrc.api import DareUnit
+from daresrc.api import StepUnit
 
-class StepUnit(DareUnit):
+class StepUnit(StepUnit):
      
     def __init__(self):
           
@@ -35,6 +35,10 @@ class StepUnit(DareUnit):
 
     def add_cu(self, cu_id):
         self.UnitInfo['compute_units'].append(cu_id)  
+        return True 
+
+    def add_input_du(self, cu_id):
+        self.UnitInfo['transfer_input_data_units'].append(cu_id)  
         return True 
     
     def change_status(self, updater,status):        

@@ -11,23 +11,35 @@ class DareManager(object):
     def __init__(self):
         pass
     
-    def add_wu(self):
-        pass
-        
-    def add_du(self):
-        pass
-        
-    def add_resource(self):
-        pass
-    
-    def add_step(self):
-        pass
-
     def start(self):
         pass
+        
+    def start_step(self):
+        pass
+        
+    def create_static_workflow(self):
+        pass
+    
+    def prepare_pilot_units(self):
+        pass
+
+    def prepare_step_units(self):
+        pass
+
+    def prepare_compute_units(self):
+        pass
+
+    def prepare_data_units(self):
+        pass
 
 
-class DareUnit(object):
+
+    def cancel(self):
+        pass
+
+
+
+class StepUnit(object):
      
     #used to define multiple units here 
     def __init__(self):          
@@ -43,7 +55,7 @@ class DareUnit(object):
         pass
         
         
-class WorkUnitStates(object):
+class ComputeUnitStates(object):
     Unknown = 0
     New = 1
     Running = 2
@@ -51,7 +63,7 @@ class WorkUnitStates(object):
     Canceled = 4
     Failed = 5
 
-class ReosourceStates(object):
+class ComputePilotStates(object):
     Unknown = 0
     New = 1
     Running = 2
@@ -59,6 +71,15 @@ class ReosourceStates(object):
     Canceled = 4
     Failed = 5
     Queue = 6
+
+class DataPilotStates(object):
+    Unknown = 0
+    New = 1
+    Running = 2
+    Done = 3
+    Canceled = 4
+    Failed = 5
+
 
 class StepStates(object):
     Unknown = 0

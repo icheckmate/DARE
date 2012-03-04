@@ -74,7 +74,7 @@ class DareManager(object):
                 if self.check_to_start_step(step_id):
                     step = self.start_step(step_id)                    
         except KeyboardInterrupt:
-            self.dare_cancel()
+            self.cancel()
 
 
     def check_to_start_step(self, step_id):
@@ -98,8 +98,8 @@ class DareManager(object):
         p = []
         logging.debug(" Started running %s "%step_id)
         for du_id in self.step_units_repo[step_id].UnitInfo['transfer_input_data_units']:
-                data_unit = data_service.submit_filetransfer(self.get_du_desc(du_id))
-                logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
+                data_unit = self.compute_data_service.submit_data_unit(self.data_units_repo[du_id])
+                logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(self.data_units_repo[du_id])))
                 data_unit.wait()
         #        self.compute_data_service.wait()
         logging.debug(" input tranfer for step %s complete"%step_id)
@@ -114,7 +114,7 @@ class DareManager(object):
         self.compute_data_service.wait()
 
         for du_id in self.step_units_repo[step_id].UnitInfo['transfer_output_data_units']:
-                data_unit = self.compute_data_service.submit_data_unit(data_unit_description)
+                data_unit = self.compute_data_service.submit_data_unit(self.data_units_repo[du_id])
                 logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
                 data_unit.wait()
         logging.debug(" Output tranfer for step %s complete"%step_id)
@@ -142,7 +142,7 @@ class DareManager(object):
         self.prepare_pilot_units()
 
         self.prepare_step_units()
-        self.prepare_work_units()
+        self.prepare_compute_units()
 
         self.prepare_data_units()
 
@@ -241,14 +241,14 @@ class DareManager(object):
         logging.info("Done preparing Step Units ")
 
         
-    def prepare_work_units(self):
+    def prepare_compute_units(self):
 
-        logging.info("Starting to prepare Work Units ")
+        logging.info("Starting to prepare Compute Units ")
 
         #add prepare work dir 
 
         for step in self.dare_conf_main['steps'].split(','):
-            logging.info("Preparing Work Units: %s"%step)
+            logging.info("Preparing compute Units: %s"%step)
 
             try:
                 step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
@@ -289,18 +289,9 @@ class DareManager(object):
 
                 self.compute_units_repo[cu_uuid]=compute_unit_description
                 # add this cu to step
-                self.add_cu_to_step(cu_step_id, cu_uuid)
+                self.step_units_repo[cu_step_id].add_cu(cu_uuid)
 
-        logging.info("Done preparing Work Units ")
-
-    def add_cu_to_step(self, step_id, cu_uuid):
-        self.step_units_repo[step_id].add_cu(cu_uuid)
-
-    def add_du_to_step(self, step_id, du_uuid):
-
-        for key in  self.step_units_repo.keys():        
-            if key == step_id:
-                self.step_units_repo[key].add_du(du_uuid)
+        logging.info("Done preparing compute Units ")
                     
 
     def prepare_data_units(self):                
@@ -308,7 +299,7 @@ class DareManager(object):
         logging.info("Starting to prepare Data Units ")
 
         for step in self.dare_conf_main['steps'].split(','):
-            logging.info("Preparing Work Units: %s"%step)
+            logging.info("Preparing Data Units: %s"%step)
 
             try:
                 step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
@@ -327,7 +318,7 @@ class DareManager(object):
 
             du_uuid = "du-%s"%(uuid.uuid1(),)
             # make absolute paths
-            du_step_id  = "step-%s-%s"%(step.strip(), self.dare_id),
+            du_step_id  = "step-%s-%s"%(step.strip(), self.dare_id)
 
             data_unit_description = {
                                       "file_urls":absolute_url_list,
@@ -339,10 +330,10 @@ class DareManager(object):
 
             self.data_units_repo[du_uuid]=data_unit_description
             # add this cu to step
-            self.add_du_to_step(du_step_id, du_uuid)
+            self.step_units_repo[du_step_id].add_input_du(du_uuid)
 
 
-    def dare_cancel(self):
+    def cancel(self):
         logging.debug("Terminate Pilot Compute/Data Service")
         self.compute_data_service.cancel()
         for pilot_data_service in self.data_pilot_pilotjobs:
