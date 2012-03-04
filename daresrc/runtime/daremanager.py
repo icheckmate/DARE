@@ -34,8 +34,8 @@ class DareManager(object):
  
         self.darecfg = {}
 
-        self.pilot_units_repo = []
-        self.pilot_units_repo_new = {}
+        self.compute_pilot_units_repo = {}
+        self.data_pilot_units_repo= {}
              
         self.step_units_repo = []
         self.step_units_repo_new = {} 
@@ -55,20 +55,19 @@ class DareManager(object):
            #create multiple manyjobs
             logging.info("Create Compute Engine service ")
 
-            pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-            pilotjob2 = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
-            ps = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
+            pilot_compute_service = PilotComputeService()
+            pilot_data_service = PilotDataService()
+
+            for compute_pilot, desc in self.compute_pilot_units_repo:            
+                compute_pilot_pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=desc)
+
+            for data_pilot, desc in self.compute_pilot_units_repo:            
+                data_pilot_pilotjob = pilot_data_service.create_pilot(pilot_data_description=desc)
     
-            compute_data_service = ComputeDataService()
-            compute_data_service.add_pilot_compute_service(pilot_compute_service)
-            compute_data_service.add_pilot_data_service(pilot_data_service) 
+            self.compute_data_service = ComputeDataService()
+            self.compute_data_service.add_pilot_compute_service(pilot_compute_service)
+            self.compute_data_service.add_pilot_data_service(pilot_data_service) 
 
-
-            pilots_service = pilotService(self.pilot_units_repo, COORDINATION_URL)
-            subjobs_service =  SubjobService(pilots_service)
-
-            data_service = Data()
-        
             ### run the steps
             for step in self.step_units_repo:
                 if self.check_to_start_step(step):
@@ -107,8 +106,10 @@ class DareManager(object):
         data_service.wait_for_transfers()
 
         for cu_id in step.UnitInfo['work_units']:                    
-                cu = subjobs_service.submit_sj(self.get_sj_desc(cu_id))
-        subjobs_service.wait_for_subjobs()
+                compute_unit = self.compute_data_service.submit_compute_unit(self.get_cu_desc(cu_id))
+                logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
+
+        self.compute_data_service.wait()
 
         for du_id in step.UnitInfo['transfer_output_data_units']:
                 p = data_service.submit_filetransfer(self.get_du_desc(du_id))
@@ -148,7 +149,9 @@ class DareManager(object):
 
         for pilot in self.dare_conf_main['used_pilots'].split(','):
             pilot =  pilot.strip()
-            pilot_unit_uuid = "pilot-%s-%s"%(pilot, str(uuid.uuid1()))
+            compute_pilot_uuid = "compute-pilot-%s-%s"%(pilot, str(uuid.uuid1()))
+            data_pilot_uuid = "compute-pilot-%s-%s"%(pilot, str(uuid.uuid1()))
+
             pilot_info_from_main_cfg = self.dare_conf_full.SectionDict(pilot)
  
             logging.info("Preparing pilot unit for  %s"%pilot)
@@ -163,7 +166,6 @@ class DareManager(object):
 
             info_pilot = pilot_config_from_db.SectionDict(pilot)        
 
-            pilot_compute_service = PilotComputeService()
 
             # create pilot job service and initiate a pilot job
             pilot_compute_description = {
@@ -176,10 +178,10 @@ class DareManager(object):
                             }
 
 
+            self.compute_pilot_repo[compute_pilot_uuid] = pilot_compute_description
+            self.data_pilot_repo[data_pilot_uuid] = pilot_compute_description
 
-            self.pilot_units_repo['pilot_unit_uuid'] = pilot_compute_description
 
-            pilot_data_service = PilotDataService()
             pilot_data_description={
                                 "service_url": info_pilot['data_service_url'],
                                 "size": 100,   
@@ -273,47 +275,30 @@ class DareManager(object):
 
             for input_file in step_info_from_main_cfg.get('input_names', '').split(','):
 
+                input_file = input_file.strip()
+                cu_uuid = "cu-%s"%(uuid.uuid1(),)
+                cu_working_directory = '/tmp/'  
+                cu_step_id : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
+
+
                # start work unit
                 compute_unit_description = {
-                        "executable": "/bin/cat",
+                        "executable":step_info_from_main_cfg['cu_type']["executable"],
                         "arguments": ["test1.txt"],
                         "total_core_count": 1,
                         "number_of_processes": 1,
                         "working_directory": data_unit.url,
                         #"working_directory": os.getcwd(),
-                        "output": "stdout.txt",
-                        "error": "stderr.txt",   
+                        "output":"dare-cu-stdout-"+ cu_uuid +".txt",
+                        "error": "dare-cu-stderr-"+ cu_uuid +".txt",   
                         "affinity_datacenter_label": "eu-de-south",              
                         "affinity_machine_label": "mymachine-1" 
                 }    
-                compute_unit = compute_data_service.submit_compute_unit(compute_unit_description)
-                logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
-                compute_data_service.wait()
 
 
-                input_file = input_file.strip()
-                cu_uuid = "cu-%s"%(uuid.uuid1(),)
-                cu_working_directory = '/tmp/'      
-                info_cu =  {"cu_id"   : cu_uuid,
-                            "step_id" : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
-                            "pilot" : 'any',
-                            
-                            "arguments" : input_file,
-                            "after_units":[],
-                            "cu_desc" : cu_conf_full.SectionDict(step_info_from_main_cfg['cu_type']),
-                            "output": os.path.join(cu_working_directory , "dare-cu-stdout-"+ cu_uuid +".txt"),
-                            "error": os.path.join(cu_working_directory , "dare-cu-stderr-"+ cu_uuid +".txt" ),
-                            "working_directory": '',
-                            #process thes
-                            "cu":''
-
-                           }  
-      
-                cu = WorkUnit()
-                cu.define_param(info_cu)
-                self.work_units_repo.append(cu)
+                self.compute_units_repo['cu_uuid']=cu
                 # add this cu to step
-                self.add_cu_to_step(info_cu['step_id'], cu_uuid)
+                self.add_cu_to_step(cu_step_id, cu_uuid)
 
         logging.info("Done preparing Work Units ")
 
