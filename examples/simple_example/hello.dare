@@ -8,14 +8,14 @@ used_pilots = localhost
 [localhost]
 pilot_config_file = default
 #/path/to/resource.cfg
-total_core_count = 1   
+number_of_processes = 1   
 walltime= 10
 
 
 [hello_1]
 step_name = hello_1
 resource = 'localhost'
-wu_type = echo_hello
+cu_type = echo_hello
 step_cfg_file = default
 arg_1_value = "hello", "world", "hello_world"
 arg_1_value_add_input_dir = True
@@ -26,7 +26,7 @@ transfer_inputs = False
 [hello_2]
 step_name = hello_2
 start_after_steps = hello_1, hello_3
-wu_type = echo_hello
+cu_type = echo_hello
 input_names = "bye", "world", "bye_world"
 arg_2 = ""
 step_cfg_file = default
@@ -35,7 +35,7 @@ step_cfg_file = default
 [hello_3]
 step_name = hello_3
 after_steps = hello_1
-wu_type = echo_hello
+cu_type = echo_hello
 input_names = "bye", "world", "bye_world"
 arg_2 = ""
 step_cfg_file = default

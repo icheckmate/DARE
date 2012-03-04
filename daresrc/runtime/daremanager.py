@@ -34,17 +34,16 @@ class DareManager(object):
  
         self.darecfg = {}
 
-        self.compute_pilot_units_repo = {}
-        self.data_pilot_units_repo= {}
+        self.compute_pilot_repo = {}
+        self.data_pilot_repo= {}
+
+        self.compute_pilot_pilotjobs=[]
+        self.data_pilot_pilotjobs = [] 
              
-        self.step_units_repo = []
-        self.step_units_repo_new = {} 
+        self.step_units_repo = {}
 
-        self.work_units_repo = []
-        self.work_units_repo_new = {}
-
-        self.data_units_repo = []
-        self.data_units_repo_new = {}
+        self.compute_units_repo = {}
+        self.data_units_repo = {}
 
         self.create_static_workflow()
 
@@ -58,70 +57,73 @@ class DareManager(object):
             pilot_compute_service = PilotComputeService()
             pilot_data_service = PilotDataService()
 
-            for compute_pilot, desc in self.compute_pilot_units_repo:            
-                compute_pilot_pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=desc)
+            for compute_pilot, desc in self.compute_pilot_repo.items():
+                self.compute_pilot_pilotjobs.append(pilot_compute_service.create_pilot(pilot_compute_description=desc))
 
-            for data_pilot, desc in self.compute_pilot_units_repo:            
-                data_pilot_pilotjob = pilot_data_service.create_pilot(pilot_data_description=desc)
+            for data_pilot, desc in self.data_pilot_repo.items():            
+                self.data_pilot_pilotjobs.append(pilot_data_service.create_pilot(pilot_data_description=desc))
     
             self.compute_data_service = ComputeDataService()
             self.compute_data_service.add_pilot_compute_service(pilot_compute_service)
             self.compute_data_service.add_pilot_data_service(pilot_data_service) 
 
             ### run the steps
-            for step in self.step_units_repo:
-                if self.check_to_start_step(step):
-                    step = self.start_step(step)                    
+            for step_id in self.step_units_repo.keys():
+                #import pdb; pdb.set_trace()
+                if self.check_to_start_step(step_id):
+                    step = self.start_step(step_id)                    
         except KeyboardInterrupt:
-            pilots_service.end_manyjob_service()
+            self.dare_cancel()
 
 
-    def check_to_start_step(self, step):
+    def check_to_start_step(self, step_id):
         flags = []
-        if step.get_status() == "New":  
-           for step_id in step.UnitInfo['dependent_steps']:
-               if self.step_id_status(step_id) == "Done":
+        
+        if self.step_units_repo[step_id].get_status() == "New":  
+           for dep_step_id in self.step_units_repo[step_id].UnitInfo['start_after_steps']:
+               if self.step_units_repo[dep_step_id].get_status() == "Done":
                   flags.append(True)
                else:
                   flags.append(False)
         return False if False in flags else True
     
-    def step_id_status(self, step_id):
-        for step in self.step_units_repo:
-            if step_id == step.get_step_id():             
-                return step.get_status
-        return False
-            
-    def start_step(self, step):
+    def start_step(self, step_id):
 
         starttime = time.time()
 
         #job started update status 
-        step.change_status(self.updater,'Running')
+        self.step_units_repo[step_id].change_status(self.updater,'Running')
     
         p = []
-
-        for du_id in step.UnitInfo['transfer_input_data_units']:
-                p = data_service.submit_filetransfer(self.get_du_desc(du_id))
-        data_service.wait_for_transfers()
-
-        for cu_id in step.UnitInfo['work_units']:                    
+        logging.debug(" Started running %s "%step_id)
+        for du_id in self.step_units_repo[step_id].UnitInfo['transfer_input_data_units']:
+                data_unit = data_service.submit_filetransfer(self.get_du_desc(du_id))
+                logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
+                data_unit.wait()
+        #        self.compute_data_service.wait()
+        logging.debug(" input tranfer for step %s complete"%step_id)
+        for cu_id in self.step_units_repo[step_id].UnitInfo['work_units']:                    
                 compute_unit = self.compute_data_service.submit_compute_unit(self.get_cu_desc(cu_id))
                 logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
+ 
+        logging.debug(" Compute jobs for step %s complete"%step_id)
 
         self.compute_data_service.wait()
 
-        for du_id in step.UnitInfo['transfer_output_data_units']:
-                p = data_service.submit_filetransfer(self.get_du_desc(du_id))
-        data_service.wait_for_transfers()
+        for du_id in self.step_units_repo[step_id].UnitInfo['transfer_output_data_units']:
+                data_unit = self.compute_data_service.submit_data_unit(data_unit_description)
+                logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
+                data_unit.wait()
+        logging.debug(" Output tranfer for step %s complete"%step_id)
+
+        #        self.compute_data_service.wait()
 
         runtime = time.time()-starttime
 
         #all jobs done update status
-        step.change_status(self.updater,'Done')     
-        
-        return step
+        self.step_units_repo[step_id].change_status(self.updater,'Running')
 
+        
     def process_config_file(self):
     
         self.dare_conf_full = CfgParser(self.dare_conffile)
@@ -170,35 +172,29 @@ class DareManager(object):
             # create pilot job service and initiate a pilot job
             pilot_compute_description = {
                              "service_url": info_pilot['service_url'],
-                             "number_of_processes": info_pilot['number_of_processes'],                             
                              "working_directory": info_pilot['working_directory'],
                              'affinity_datacenter_label': pilot,              
                              'affinity_machine_label': pilot ,
+                             "number_of_processes":  int(pilot_info_from_main_cfg['number_of_processes']),                             
                              "walltime" : int(pilot_info_from_main_cfg['walltime'])
                             }
 
 
             self.compute_pilot_repo[compute_pilot_uuid] = pilot_compute_description
-            self.data_pilot_repo[data_pilot_uuid] = pilot_compute_description
 
 
             pilot_data_description={
                                 "service_url": info_pilot['data_service_url'],
                                 "size": 100,   
-                                "affinity_datacenter_label": pilot,              
-                                "affinity_machine_label": pilot                              
+                                "affinity_datacenter_label": pilot+'-dcl',              
+                                "affinity_machine_label": pilot + '-aml'                              
                              }
+
+            self.data_pilot_repo[data_pilot_uuid] = pilot_data_description
 
         logging.info("Done preparing Pilot Units ")
 
 
-
-
-    def find_pilot_id(self, name = ''):
-        for ru in self.pilot_units_repo:
-           if name and name.strip() == ru.name:
-              return  ru.id
-        return  ru.id
                       
        
     def prepare_step_units(self):        
@@ -226,9 +222,8 @@ class DareManager(object):
                       "name":step_info_from_main_cfg.get('step_name').strip(),
                       "status":'New',
 
-                      "pilot": self.find_pilot_id(step_info_from_main_cfg.get('pilot')),
+                      "pilot": step_info_from_main_cfg.get('pilot'),
 
-                      "dependent_steps": step_info_from_main_cfg.get('start_after_steps', '').split(','),
                       "start_after_steps":start_after_steps ,
                       "work_units":[],
                       "transfer_input_data_units":[],
@@ -237,15 +232,14 @@ class DareManager(object):
 
             su = StepUnit()
             su.define_param(info_steps)
-            self.step_units_repo.append(su)
-            self.step_units_repo_new[step_unit_uuid] = su
+            self.step_units_repo[step_unit_uuid] = su
 #        import pdb; pdb.set_trace()  
 
         logging.info("Done preparing Step Units ")
 
         
     def prepare_work_units(self):
-        self.work_units_repo = []
+
         logging.info("Starting to prepare Work Units ")
 
         #add prepare work dir 
@@ -266,37 +260,31 @@ class DareManager(object):
                 step_cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'echo_hello.cu')    
 
             # check if file exists
-            cu_conf_full = CfgParser(step_cfg_file) 
+            all_cu_confs= CfgParser(step_cfg_file) 
 
-
-            #print step_cfg_file
-            
-
-
+            cu_conf = all_cu_confs.SectionDict( step_info_from_main_cfg.get('cu_type', 'default').strip())
+            #print step_cfg_file           
             for input_file in step_info_from_main_cfg.get('input_names', '').split(','):
 
                 input_file = input_file.strip()
                 cu_uuid = "cu-%s"%(uuid.uuid1(),)
-                cu_working_directory = '/tmp/'  
-                cu_step_id : "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
-
-
-               # start work unit
+                cu_working_directory = '/tmp/'  #data_unit.url
+                cu_step_id  = "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
+                # start work unit
                 compute_unit_description = {
-                        "executable":step_info_from_main_cfg['cu_type']["executable"],
-                        "arguments": ["test1.txt"],
+                        "executable": cu_conf["executable"],
+                        "arguments": cu_conf["arguments"],
                         "total_core_count": 1,
                         "number_of_processes": 1,
-                        "working_directory": data_unit.url,
-                        #"working_directory": os.getcwd(),
+                        "working_directory": cu_working_directory,
                         "output":"dare-cu-stdout-"+ cu_uuid +".txt",
                         "error": "dare-cu-stderr-"+ cu_uuid +".txt",   
                         "affinity_datacenter_label": "eu-de-south",              
                         "affinity_machine_label": "mymachine-1" 
-                }    
+                       }    
 
 
-                self.compute_units_repo['cu_uuid']=cu
+                self.compute_units_repo[cu_uuid]=compute_unit_description
                 # add this cu to step
                 self.add_cu_to_step(cu_step_id, cu_uuid)
 
@@ -304,34 +292,60 @@ class DareManager(object):
 
     def add_cu_to_step(self, step_id, cu_uuid):
 
-        for i in  range(0, len(self.step_units_repo)):        
-            if self.step_units_repo[i].get_step_id() == step_id:
-                self.step_units_repo[i].add_work_unit(cu_uuid)
+        for key in self.step_units_repo.keys():        
+            if key == step_id:
+                self.step_units_repo[key].add_cu(cu_uuid)
 
+    def add_du_to_step(self, step_id, cu_uuid):
 
+        for key in  self.step_units_repo.keys():        
+            if key == step_id:
+                self.step_units_repo[key].add_du(cu_uuid)
                     
 
     def prepare_data_units(self):                
-        # Create Data Unit Description
-        base_dir = "/Users/luckow/workspace-saga/applications/pilot-store/test/data1"
-        url_list = os.listdir(base_dir)
-        # make absolute paths
-        absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
-        data_unit_description = {
-                                  "file_urls":absolute_url_list,
-                                  "affinity_datacenter_label": "eu-de-south",              
-                                  "affinity_machine_label": "mymachine-1"
-                                 }    
 
-        # submit pilot data to a pilot store    
-        data_unit = compute_data_service.submit_data_unit(data_unit_description)
-        data_unit.wait()
-        logging.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
-    
-          
+        logging.info("Starting to prepare Data Units ")
 
-    def dare_cancle(self):
+        for step in self.dare_conf_main['steps'].split(','):
+            logging.info("Preparing Work Units: %s"%step)
+
+            try:
+                step_info_from_main_cfg = self.dare_conf_full.SectionDict(step.strip())
+            except:
+                logging.info("step description section not found for step %s"%step)  
+                sys.exit()    
+
+
+            #print step_cfg_file 
+            absolute_url_list = step_info_from_main_cfg.get('input_names', '').split(',')
+       
+            # Create Data Unit Description
+            #   base_dir = "/Users/Sharath/workspace/projects/backups"
+            #   url_list = os.listdir(base_dir)
+            #   absolute_url_list = [os.path.join(base_dir, i) for i in url_list]
+
+            du_uuid = "du-%s"%(uuid.uuid1(),)
+            # make absolute paths
+            du_step_id  = "step-%s-%s"%(step.strip(), self.dare_id),
+
+            data_unit_description = {
+                                      "file_urls":absolute_url_list,
+                                      "affinity_datacenter_label": "eu-de-south",              
+                                      "affinity_machine_label": "mymachine-1"
+                                     }    
+
+                # submit pilot data to a pilot store    
+
+            self.data_units_repo[du_uuid]=data_unit_description
+            # add this cu to step
+            self.add_du_to_step(du_step_id, du_uuid)
+
+
+    def dare_cancel(self):
         logging.debug("Terminate Pilot Compute/Data Service")
-        compute_data_service.cancel()
-        pilot_data_service.cancel()
-        pilot_compute_service.cancel()
+        self.compute_data_service.cancel()
+        for pilot_data_service in self.data_pilot_pilotjobs:
+            pilot_data_service.cancel()         
+        for pilot_compute_service in self.compute_pilot_pilotjobs:
+            pilot_compute_service.cancel() 

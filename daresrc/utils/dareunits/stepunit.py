@@ -27,7 +27,7 @@ class StepUnit(DareUnit):
             "work_units":  step_info["work_units"],
             "transfer_input_data_units":  step_info["transfer_input_data_units"],        
             "transfer_output_data_units":  step_info["transfer_output_data_units"],
-            "dependent_steps": step_info["dependent_steps"]
+            "start_after_steps": step_info["start_after_steps"]
         }
 
     def get_step_id(self):

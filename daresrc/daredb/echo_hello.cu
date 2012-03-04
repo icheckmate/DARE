@@ -8,7 +8,7 @@
 executable = /bin/date
 spmd_variation = single
 number_of_processes = 1
-all_arguments = arg_1,arg_2,arg_3,arg_4
+arguments = arg_1,arg_2,arg_3,arg_4
 out_arg_value = arg_4_key
 arg_1_key = -a
 #default value
