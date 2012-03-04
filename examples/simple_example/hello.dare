@@ -2,11 +2,11 @@
 steps = hello_1, hello_2, hello_3
 jobid = 1
 webupdate= False
-used_resources = localhost
+used_pilots = localhost
 #, localhost
 
 [localhost]
-resource_config_file = default
+pilot_config_file = default
 #/path/to/resource.cfg
 total_core_count = 1   
 walltime= 10
