@@ -12,9 +12,10 @@ import time
 
 from daresrc import logging
 
-from daresrc.utils.dareunits import DataUnit, StepUnit, ResourceUnit, WorkUnit
-from daresrc.utils.bigjobservices import ResourceService, SubjobService
-from daresrc.utils.data import Data
+
+from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
+
+from daresrc.utils.dareunits StepUnit
 from daresrc.utils.cfgparser import CfgParser
 
 from daresrc.utils.updater import Updater
@@ -41,8 +42,11 @@ class DareManager(object):
         self.step_units_repo_new = {} 
 
         self.work_units_repo = []
+        self.work_units_repo_new = {}
+
         self.data_units_repo = []
-      
+        self.data_units_repo_new = {}
+
         self.create_static_workflow()
 
         self.start()
@@ -135,29 +139,55 @@ class DareManager(object):
         for resource in self.dare_conf_main['used_resources'].split(','):
             resource =  resource.strip()
             resource_unit_uuid = "resource-%s-%s"%(resource, str(uuid.uuid1()))
-
-            logging.info("Preparing Resource unit for  %s"%resource)
             resource_info_from_main_cfg = self.dare_conf_full.SectionDict(resource)
+ 
+            logging.info("Preparing Resource unit for  %s"%resource)
             
             resource_config_file = resource_info_from_main_cfg.get('resource_config_file', "undefined_resource_file")
              
             if resource_config_file.lower() == 'default' or resource_config_file.lower() == 'undefined_resource_file':
                 resource_config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'daredb', 'resource.cfg')                
 
+
             resource_config_from_db = CfgParser(resource_config_file)
+
             info_resource = resource_config_from_db.SectionDict(resource)        
 
-            info_resource['ru_id'] = resource_unit_uuid
-            info_resource["walltime"] = int(resource_info_from_main_cfg['walltime'])
-            info_resource["total_core_count"] = int(resource_info_from_main_cfg['total_core_count'])
-            info_resource["name"] = resource
+            pilot_compute_service = PilotComputeService()
 
-            ru = ResourceUnit()                    
-            ru.define_param(info_resource) #check for sufficient info and abort if error.
+            # create pilot job service and initiate a pilot job
+            pilot_compute_description = {
+                             "service_url": info_resource['service_url'],
+                             "number_of_processes": info_resource['number_of_processes'],                             
+                             "working_directory": info_resource['working_directory'],
+                             'affinity_datacenter_label': resource,              
+                             'affinity_machine_label': resource 
+                             "walltime" = int(resource_info_from_main_cfg['walltime'])
+                            }
 
-            self.resource_units_repo.append(ru)
-            self.resource_units_repo_new['resource_unit_uuid'] = ru
-        logging.info("Done preparing Resource Units ")
+            pilotjob = pilot_compute_service.create_pilot(pilot_compute_description=pilot_compute_description)
+
+
+            self.pilot_units_repo['resource_unit_uuid'] = pilot_compute_description
+
+            pilot_data_service = PilotDataService()
+            pilot_data_description={
+                                "service_url": info_resource['data_service_url'],
+                                "size": 100,   
+                                "affinity_datacenter_label": resource,              
+                                "affinity_machine_label": resource                              
+                             }
+            ps = pilot_data_service.create_pilot(pilot_data_description=pilot_data_description)
+    
+            compute_data_service = ComputeDataService()
+            compute_data_service.add_pilot_compute_service(pilot_compute_service)
+            compute_data_service.add_pilot_data_service(pilot_data_service) 
+
+
+        logging.info("Done preparing Pilot Units ")
+
+
+
 
     def find_resource_id(self, name = ''):
         for ru in self.resource_units_repo:

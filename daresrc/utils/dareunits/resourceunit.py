@@ -67,3 +67,9 @@ class ResourceUnit(DareUnit):
 
     def get_param(self):
         pass
+
+    def __setattr__(self, attr, value):
+        self[attr]=value
+    
+    def __getattr__(self, attr):
+        return self[attr]

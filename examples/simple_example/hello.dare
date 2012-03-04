@@ -2,8 +2,8 @@
 steps = hello_1, hello_2, hello_3
 jobid = 1
 webupdate= False
-
-used_resources = localhost, localhost
+used_resources = localhost
+#, localhost
 
 [localhost]
 resource_config_file = default
