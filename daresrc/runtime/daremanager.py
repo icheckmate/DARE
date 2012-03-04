@@ -15,7 +15,7 @@ from daresrc import logging
 
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
-from daresrc.utils.dareunits import StepUnit
+from daresrc.utils.stepunit import StepUnit
 from daresrc.utils.cfgparser import CfgParser
 
 from daresrc.utils.updater import Updater
