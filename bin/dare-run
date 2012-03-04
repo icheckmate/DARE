@@ -29,8 +29,12 @@ if __name__ == "__main__":
     conffile = sys.argv[1]
     
     logging.debug("starting DARE")
-    dare = DareManager(conffile)
-    dare.start()
-    logging.debug(" DARE Exec Done")
+    try:
+       dare = DareManager(conffile)
+       dare.start()
+    except KeyboardInterrupt:
+       dare.cancel()
+
+    logging.debug("DARE Exec Done")
      
    

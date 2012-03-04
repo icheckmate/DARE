@@ -14,7 +14,7 @@ walltime= 10
 
 [hello_1]
 step_name = hello_1
-resource = 'localhost'
+resource = localhost
 cu_type = echo_hello
 step_cfg_file = default
 arg_1_value = "hello", "world", "hello_world"
