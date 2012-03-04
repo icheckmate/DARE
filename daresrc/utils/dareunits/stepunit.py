@@ -24,7 +24,7 @@ class StepUnit(DareUnit):
             "dare_web_id":step_info["dare_web_id"],
             "name": step_info["name"],
             "status": step_info["status"],
-            "work_units":  step_info["work_units"],
+            "compute_units":  step_info["work_units"],
             "transfer_input_data_units":  step_info["transfer_input_data_units"],        
             "transfer_output_data_units":  step_info["transfer_output_data_units"],
             "start_after_steps": step_info["start_after_steps"]
@@ -33,8 +33,8 @@ class StepUnit(DareUnit):
     def get_step_id(self):
         return self.UnitInfo['step_id']
 
-    def add_work_unit(self, wu_id):
-        self.UnitInfo['work_units'].append(wu_id)  
+    def add_cu(self, cu_id):
+        self.UnitInfo['compute_units'].append(cu_id)  
         return True 
     
     def change_status(self, updater,status):        

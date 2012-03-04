@@ -9,6 +9,7 @@ import uuid
 import os
 import sys
 import time
+import pdb
 
 from daresrc import logging
 
@@ -102,8 +103,10 @@ class DareManager(object):
                 data_unit.wait()
         #        self.compute_data_service.wait()
         logging.debug(" input tranfer for step %s complete"%step_id)
-        for cu_id in self.step_units_repo[step_id].UnitInfo['work_units']:                    
-                compute_unit = self.compute_data_service.submit_compute_unit(self.get_cu_desc(cu_id))
+        #import pdb; pdb.set_trace()
+
+        for cu_id in self.step_units_repo[step_id].UnitInfo['compute_units']:                    
+                compute_unit = self.compute_data_service.submit_compute_unit(self.compute_units_repo[cu_id])
                 logging.debug("Finished setup of PSS and PDS. Waiting for scheduling of PD")
  
         logging.debug(" Compute jobs for step %s complete"%step_id)
@@ -269,11 +272,11 @@ class DareManager(object):
                 input_file = input_file.strip()
                 cu_uuid = "cu-%s"%(uuid.uuid1(),)
                 cu_working_directory = '/tmp/'  #data_unit.url
-                cu_step_id  = "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id),
+                cu_step_id  = "step-%s-%s"%(step_info_from_main_cfg.get('step_name').strip(), self.dare_id)
                 # start work unit
                 compute_unit_description = {
                         "executable": cu_conf["executable"],
-                        "arguments": cu_conf["arguments"],
+                        "arguments": cu_conf["arguments"].split(','),
                         "total_core_count": 1,
                         "number_of_processes": 1,
                         "working_directory": cu_working_directory,
@@ -291,16 +294,13 @@ class DareManager(object):
         logging.info("Done preparing Work Units ")
 
     def add_cu_to_step(self, step_id, cu_uuid):
+        self.step_units_repo[step_id].add_cu(cu_uuid)
 
-        for key in self.step_units_repo.keys():        
-            if key == step_id:
-                self.step_units_repo[key].add_cu(cu_uuid)
-
-    def add_du_to_step(self, step_id, cu_uuid):
+    def add_du_to_step(self, step_id, du_uuid):
 
         for key in  self.step_units_repo.keys():        
             if key == step_id:
-                self.step_units_repo[key].add_du(cu_uuid)
+                self.step_units_repo[key].add_du(du_uuid)
                     
 
     def prepare_data_units(self):                
