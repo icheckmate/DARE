@@ -14,21 +14,30 @@ walltime= 10
 
 [hello_1]
 step_name = hello_1
+resource = localhost
 cu_type = echo_hello
-input_names = hello
 step_cfg_file = default
-
+arg_1_value = hello
+arg_1_value_add_input_dir = True
+#/path/to/file1, /path/to/file2
+transfer_inputs = False
+#/path/to/step.cfg
 
 [hello_2]
 step_name = hello_2
-after_steps = hello_1
+start_after_steps = hello_1, hello_3
 cu_type = echo_hello
-input_names = dare
+input_names = DARE
+
 step_cfg_file = default
+#/path/to/step.cfg
 
 [hello_3]
 step_name = hello_3
-after_steps = hello_2
+after_steps = hello_1
 cu_type = echo_hello
 input_names = bye
+arg_2 = ""
 step_cfg_file = default
+#step_conf = 
+#/path/to/step.cfg

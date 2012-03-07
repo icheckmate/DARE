@@ -10,6 +10,7 @@ import os
 import sys
 import time
 import pdb
+import threading
 
 from daresrc import logger
 
@@ -68,10 +69,14 @@ class DareManager(object):
             self.compute_data_service.add_pilot_compute_service(self.pilot_compute_service)
             self.compute_data_service.add_pilot_data_service(self.pilot_data_service) 
 
+            self.step_thread= {}
+
             ### run the steps
             for step_id in self.step_units_repo.keys():
                 if self.check_to_start_step(step_id):
-                    step = self.start_step(step_id)                    
+                    self.step_thread['stepstep_id'] = threading.Thread(target=self.start_step(step_id))
+                    self.step_thread['stepstep_id'].start()
+
             self.cancel()
         except KeyboardInterrupt:
             self.cancel()
@@ -104,20 +109,23 @@ class DareManager(object):
         #        self.compute_data_service.wait()
             logger.debug(" input tranfer for step %s complete"%step_id)
          
-
+        step_cus = []
         for cu_id in self.step_units_repo[step_id].UnitInfo['compute_units']:                    
                 compute_unit = self.compute_data_service.submit_compute_unit(self.compute_units_repo[cu_id])
                 logger.debug("Compute Unit: Description: \n%s"%(str(self.compute_units_repo[cu_id])))
-                while compute_unit != State.Done:
-                    logger.debug("Check state")
-        
-                    state_cu = compute_unit.get_state()
-                    print "PCS State %s" % self.compute_pilot_service_repo[0]
-                    print "CU: %s State: %s"%(compute_unit, state_cu)
-                    if state_cu==State.Done:
-                        break
-                    time.sleep(2) 
-                
+
+
+        for compute_unit in step_cus:
+	        while compute_unit != State.Done:
+	             logger.debug("Check state")
+ 
+	             state_cu = compute_unit.get_state()
+	             print "PCS State %s" % self.compute_pilot_service_repo[0]
+	             print "CU: %s State: %s"%(compute_unit, state_cu)
+	             if state_cu==State.Done:
+	                 break
+	             time.sleep(2) 
+         
         logger.debug(" Compute jobs for step %s complete"%step_id)
 
         self.compute_data_service.wait()
@@ -265,7 +273,6 @@ class DareManager(object):
                 logger.info("step description section not found for step %s"%step)  
                 sys.exit()    
 
-
             step_cfg_file = step_info_from_main_cfg.get('step_cfg_file', 'undefined_step_file').strip()
 
             if step_cfg_file.lower() == 'default' or step_cfg_file.lower() == 'undefined_step_file':
@@ -286,10 +293,10 @@ class DareManager(object):
                
                 compute_unit_description = {
                         "executable": cu_conf["executable"],
-                        "arguments": cu_conf["arguments"].split(','),
+                        "arguments": self.prepare_cu_arguments(input_file,cu_conf),
                         "total_core_count": 1,
                         "number_of_processes": 1,
-                        "working_directory": cu_working_directory,
+                        #"working_directory": cu_working_directory,
                         "output":"dare-cu-stdout-"+ cu_uuid +".txt",
                         "error": "dare-cu-stderr-"+ cu_uuid +".txt",   
                         "affinity_datacenter_label": "%s-adl"%step_info_from_main_cfg.get('resource', self.dare_conf_main['used_pilots'].split(',')[0]).strip(),              
@@ -302,7 +309,18 @@ class DareManager(object):
                 self.step_units_repo[cu_step_id].add_cu(cu_uuid)
 
         logger.info("Done preparing compute Units ")
-                    
+
+    def prepare_cu_arguments(self, input_name, cu_conf):                    
+        
+        arguements = ''            
+        
+        if cu_conf.get('arguments', '').strip() != '':
+           return [input_name]
+        # check for mutiple args in different types
+        else:
+           pass
+        return [input_name] 
+      
 
     def prepare_data_units(self):                
 
