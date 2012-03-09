@@ -10,6 +10,16 @@ import os
 
 from daresrc.api import StepUnit
 
+class StepUnitStates(object):
+    Unknown = 0
+    New = 1
+    Running = 2
+    Done = 3
+    Canceled = 4
+    Failed = 5
+    Queue = 6
+
+
 class StepUnit(StepUnit):
      
     def __init__(self):

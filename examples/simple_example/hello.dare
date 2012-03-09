@@ -1,5 +1,5 @@
 [main]
-steps = hello_1, hello_2, hello_3
+steps = hello_1, hello_2, hello_3, hello_4
 jobid = 1
 webupdate= False
 used_pilots = localhost
@@ -11,23 +11,29 @@ pilot_config_file = default
 number_of_processes = 1   
 walltime= 10
 
-
 [hello_1]
 step_name = hello_1
 cu_type = echo_hello
-input_names = hello
+input_names = one
 step_cfg_file = default
 
 [hello_2]
 step_name = hello_2
-after_steps = hello_1
+after_steps = hello_3
 cu_type = echo_hello
-input_names = dare
+input_names = two
 step_cfg_file = default
 
 [hello_3]
 step_name = hello_3
-after_steps = hello_2
+after_steps = hello_1
 cu_type = echo_hello
-input_names = bye
+input_names = three
+step_cfg_file = default
+
+[hello_4]
+step_name = hello_4
+after_steps = hello_3
+cu_type = echo_hello
+input_names = four
 step_cfg_file = default

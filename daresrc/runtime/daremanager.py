@@ -16,7 +16,7 @@ from daresrc import logger
 
 from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
-from daresrc.utils.stepunit import StepUnit
+from daresrc.utils.stepunit import StepUnit ,StepUnitStates
 from daresrc.utils.cfgparser import CfgParser
 
 from daresrc.utils.updater import Updater
@@ -83,7 +83,7 @@ class DareManager(object):
             while(1):     
                 for step_id in self.step_units_repo.keys():
                     
-                    if self.step_units_repo[step_id].get_status() in  ("Done" , "Failed"):
+                    if self.step_units_repo[step_id].get_status() in  (StepUnitStates.Done, StepUnitStates.Failed):
                        count_step = count_step + 1
                 if count_step == len(self.step_units_repo):
                    break
@@ -96,9 +96,9 @@ class DareManager(object):
     def check_to_start_step(self, step_id):
         flags = []
         
-        if self.step_units_repo[step_id].get_status() == "New":  
+        if self.step_units_repo[step_id].get_status() == StepUnitStates.New:  
            for dep_step_id in self.step_units_repo[step_id].UnitInfo['start_after_steps']:
-               if self.step_units_repo[dep_step_id].get_status() == "Done":
+               if self.step_units_repo[dep_step_id].get_status() == StepUnitStates.Done:
                   flags.append(True)
                else:
                   flags.append(False)
@@ -126,7 +126,7 @@ class DareManager(object):
         NUMBER_JOBS = len(self.step_units_repo[step_id].UnitInfo['compute_units'])
         for cu_id in self.step_units_repo[step_id].UnitInfo['compute_units']:                    
                 compute_unit = self.compute_data_service.submit_compute_unit(self.compute_units_repo[cu_id])
-                logger.debug("Compute Unit: Description: \n%s"%(str(self.compute_units_repo[cu_id])))
+                logger.info("Compute Unit: Description: \n%s"%(str(self.compute_units_repo[cu_id])))
                 jobs.append(compute_unit)
                 job_start_times[compute_unit]=time.time()
                 job_states[compute_unit] = compute_unit.get_state()
@@ -147,7 +147,7 @@ class DareManager(object):
                 if old_state != state:
                     logger.debug( "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state)
                 if old_state != state and self.has_finished(state)==True:
-                    logger.debug( "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s.")
+                    logger.info( "%s step Job: "%(self.step_units_repo[step_id].UnitInfo['name']) + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s.")
                 if self.has_finished(state)==True:
                     finish_counter = finish_counter + 1
                 job_states[jobs[i]]=state
@@ -172,7 +172,8 @@ class DareManager(object):
         #runtime = time.time()-starttime
 
         #all jobs done update status
-        self.step_units_repo[step_id].change_status(self.updater,'Done')
+
+        self.step_units_repo[step_id].change_status(self.updater, StepUnitStates.Done)
 
     def has_finished(self, state):
         state = state.lower()
@@ -278,7 +279,7 @@ class DareManager(object):
                       "step_id":step_unit_uuid,
                       "dare_web_id":self.dare_web_id ,
                       "name":step_info_from_main_cfg.get('step_name').strip(),
-                      "status":'New',
+                      "status": StepUnitStates.New,
 
                       "pilot": step_info_from_main_cfg.get('pilot'),
 
