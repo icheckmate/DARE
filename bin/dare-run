@@ -31,7 +31,7 @@ if __name__ == "__main__":
     logging.debug("starting DARE")
     try:
        dare = DareManager(conffile)
-       dare.start()
+       #dare.start()
     except KeyboardInterrupt:
        dare.cancel()
 

@@ -1,5 +1,6 @@
 [main]
-steps = hello_1, hello_2, hello_3
+steps = hello_1
+#, hello_2, hello_3
 jobid = 1
 webupdate= False
 used_pilots = localhost

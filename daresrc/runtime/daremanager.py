@@ -76,9 +76,20 @@ class DareManager(object):
                 if self.check_to_start_step(step_id):
                     self.step_thread['stepstep_id'] = threading.Thread(target=self.start_step(step_id))
                     self.step_thread['stepstep_id'].start()
+                    logger.debug(" Sumitted step %s "%step_id)
+                    
+            count_step = 0
+
+            while(1):     
+                for step_id in self.step_units_repo.keys():
+                    
+                    if self.step_units_repo[step_id].get_status() in  ("Done" , "Failed"):
+                       count_step = count_step + 1
+                if count_step == len(self.step_units_repo):
+                   break
 
             self.cancel()
-        except KeyboardInterrupt:
+        except:
             self.cancel()
 
 
@@ -109,39 +120,66 @@ class DareManager(object):
         #        self.compute_data_service.wait()
             logger.debug(" input tranfer for step %s complete"%step_id)
          
-        step_cus = []
+        jobs = []
+        job_start_times = {}
+        job_states = {}
+        NUMBER_JOBS = len(self.step_units_repo[step_id].UnitInfo['compute_units'])
         for cu_id in self.step_units_repo[step_id].UnitInfo['compute_units']:                    
                 compute_unit = self.compute_data_service.submit_compute_unit(self.compute_units_repo[cu_id])
                 logger.debug("Compute Unit: Description: \n%s"%(str(self.compute_units_repo[cu_id])))
+                jobs.append(compute_unit)
+                job_start_times[compute_unit]=time.time()
+                job_states[compute_unit] = compute_unit.get_state()
+        
 
+        logger.debug("************************ All Jobs submitted ************************")
 
-        for compute_unit in step_cus:
-	        while compute_unit != State.Done:
-	             logger.debug("Check state")
- 
-	             state_cu = compute_unit.get_state()
-	             print "PCS State %s" % self.compute_pilot_service_repo[0]
-	             print "CU: %s State: %s"%(compute_unit, state_cu)
-	             if state_cu==State.Done:
-	                 break
-	             time.sleep(2) 
-         
+        while 1: 
+            finish_counter=0
+            result_map = {}
+            for i in range(0, NUMBER_JOBS):
+                old_state = job_states[jobs[i]]
+                state = jobs[i].get_state()
+                if result_map.has_key(state) == False:
+                    result_map[state]=0
+                result_map[state] = result_map[state]+1
+                #print "counter: " + str(i) + " job: " + str(jobs[i]) + " state: " + state
+                if old_state != state:
+                    logger.debug( "Job " + str(jobs[i]) + " changed from: " + old_state + " to " + state)
+                if old_state != state and self.has_finished(state)==True:
+                    logger.debug( "Job: " + str(jobs[i]) + " Runtime: " + str(time.time()-job_start_times[jobs[i]]) + " s.")
+                if self.has_finished(state)==True:
+                    finish_counter = finish_counter + 1
+                job_states[jobs[i]]=state
+                
+            logger.debug( "Current states: " + str(result_map) )
+            time.sleep(5)
+            if finish_counter == NUMBER_JOBS:
+                break
+
+        #self.compute_data_service.wait() 
         logger.debug(" Compute jobs for step %s complete"%step_id)
 
-        self.compute_data_service.wait()
-
-        for du_id in self.step_units_repo[step_id].UnitInfo['transfer_output_data_units']:
-                data_unit = self.compute_data_service.submit_data_unit(self.data_units_repo[du_id])
-                logger.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
-                data_unit.wait()
-        logger.debug(" Output tranfer for step %s complete"%step_id)
+        
+        #for du_id in self.step_units_repo[step_id].UnitInfo['transfer_output_data_units']:
+        #        data_unit = self.compute_data_service.submit_data_unit(self.data_units_repo[du_id])
+        #        logger.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(pilot_data_description)))
+        #        data_unit.wait()
+        #logger.debug(" Output tranfer for step %s complete"%step_id)
 
         #        self.compute_data_service.wait()
 
-        runtime = time.time()-starttime
+        #runtime = time.time()-starttime
 
         #all jobs done update status
-        self.step_units_repo[step_id].change_status(self.updater,'Running')
+        self.step_units_repo[step_id].change_status(self.updater,'Done')
+
+    def has_finished(self, state):
+        state = state.lower()
+        if state=="done" or state=="failed" or state=="canceled":
+            return True
+        else:
+            return False
 
         
     def process_config_file(self):
@@ -298,7 +336,7 @@ class DareManager(object):
                         "number_of_processes": 1,
                         #"working_directory": cu_working_directory,
                         "output":"dare-cu-stdout-"+ cu_uuid +".txt",
-                        "error": "dare-cu-stderr-"+ cu_uuid +".txt",   
+                        "stderr": "dare-cu-stderr-"+ cu_uuid +".txt",   
                         "affinity_datacenter_label": "%s-adl"%step_info_from_main_cfg.get('resource', self.dare_conf_main['used_pilots'].split(',')[0]).strip(),              
                         "affinity_machine_label": "%s-aml"%step_info_from_main_cfg.get('resource', self.dare_conf_main['used_pilots'].split(',')[0]).strip() 
                        }    
