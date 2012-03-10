@@ -9,5 +9,7 @@
 *.log
 
 envdare
+build
+dist
 
 *.DS_Store

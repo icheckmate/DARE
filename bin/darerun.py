@@ -8,16 +8,16 @@ __license__   = "MIT"
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "..")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)) + ".."))
 
 import optparse
 parser = optparse.OptionParser()
 
-from daresrc.runtime import DareManager
+from daresrc.runtime.daremanager import DareManager
 
 from daresrc import logging
 
-if __name__ == "__main__":
+def main():
     
     # parse conf files
     #parser = optparse.OptionParser()
@@ -26,8 +26,12 @@ if __name__ == "__main__":
 
     #confjob = options.conf_job
 
-    conffile = sys.argv[1]
-    
+    if (len(sys.argv)> 1): 
+       conffile = sys.argv[1] 
+    else:
+       raise Exception, "missing dare configurtion file"
+
+
     logging.debug("starting DARE")
     try:
        dare = DareManager(conffile)
@@ -37,4 +41,9 @@ if __name__ == "__main__":
 
     logging.debug("DARE Exec Done")
      
-   
+if __name__ == "__main__":
+    if (len(sys.argv)> 1): 
+       conffile = sys.argv[1] 
+    else:
+       raise Exception, "missing dare configurtion file" 
+    main(conffile)
