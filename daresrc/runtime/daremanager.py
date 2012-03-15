@@ -52,7 +52,7 @@ class DareManager(object):
         self.start()
 
     def start(self):         
-        try:
+        #try:
            #create multiple manyjobs
             logger.info("Create Compute Engine service ")
 
@@ -72,47 +72,69 @@ class DareManager(object):
             self.step_thread= {}
 
             ### run the steps
+            self.step_start_lock=threading.RLock()
+            self.step_run_lock=threading.RLock()
+
             for step_id in self.step_units_repo.keys():
-                if self.check_to_start_step(step_id):
-                    self.step_thread['stepstep_id'] = threading.Thread(target=self.start_step(step_id))
-                    self.step_thread['stepstep_id'].start()
-                    logger.debug(" Sumitted step %s "%step_id)
-                    
-            count_step = 0
+                    logger.info(" Sumitted step %s "%step_id)
+                    self.step_start_lock.acquire()
+                    self.start_thread_step_id =step_id
+                    self.step_start_lock.release()
 
+                    self.step_thread[step_id] = threading.Thread(target=self.start_step)
+                    
+                    self.step_thread[step_id].start()
+                    
+             
             while(1):     
-                for step_id in self.step_units_repo.keys():
-                    
-                    if self.step_units_repo[step_id].get_status() in  (StepUnitStates.Done, StepUnitStates.Failed):
-                       count_step = count_step + 1
-                if count_step == len(self.step_units_repo):
-                   break
+                count_step = [v.is_alive() for k,v in self.step_thread.items()]
+                print 'count_step', count_step
+                if not True in count_step and len(count_step)>0:                      
+                    break
+                time.sleep(10)
+                       
+
+            logger.info(" All Steps Done processing")
 
             self.cancel()
-        except:
-            self.cancel()
+        #except:
+        #    self.cancel()
 
 
     def check_to_start_step(self, step_id):
         flags = []
-        
+        print self.step_units_repo[step_id].UnitInfo['start_after_steps']
         if self.step_units_repo[step_id].get_status() == StepUnitStates.New:  
            for dep_step_id in self.step_units_repo[step_id].UnitInfo['start_after_steps']:
-               if self.step_units_repo[dep_step_id].get_status() == StepUnitStates.Done:
-                  flags.append(True)
-               else:
+               if self.step_units_repo[dep_step_id].get_status() != StepUnitStates.Done:
                   flags.append(False)
+               print self.step_units_repo[dep_step_id].get_status()
         return False if False in flags else True
-    
-    def start_step(self, step_id):
 
+
+    def start_step(self):
+        self.step_start_lock.acquire()
+        step_id = self.start_thread_step_id
+        self.step_start_lock.release()
+
+        while(1):
+            logger.info(" Checking to start step %s "%step_id)
+            if self.check_to_start_step(step_id):
+                self.run_step(step_id)
+                break
+            else:
+                logger.info(" Cannot start this step %s sleeping..."%step_id)
+                time.sleep(10)
+    
+    def run_step(self, step_id):
+        self.step_run_lock.acquire()
         starttime = time.time()
 
         #job started update status 
         self.step_units_repo[step_id].change_status(self.updater,'Running')
     
         p = []
-        logger.debug(" Started running %s "%step_id)
+        logger.info(" Started running %s "%step_id)
         for du_id in self.step_units_repo[step_id].UnitInfo['transfer_input_data_units']:
                 #data_unit = self.compute_data_service.submit_data_unit(self.data_units_repo[du_id])
                 #logger.debug("Pilot Data URL: %s Description: \n%s"%(data_unit, str(self.data_units_repo[du_id])))
@@ -174,6 +196,8 @@ class DareManager(object):
         #all jobs done update status
 
         self.step_units_repo[step_id].change_status(self.updater, StepUnitStates.Done)
+        self.step_run_lock.release()
+
 
     def has_finished(self, state):
         state = state.lower()
@@ -284,7 +308,7 @@ class DareManager(object):
                       "pilot": step_info_from_main_cfg.get('pilot'),
 
                       "start_after_steps":start_after_steps ,
-                      "work_units":[],
+                      "compute_units":[],
                       "transfer_input_data_units":[],
                       "transfer_output_data_units":[]
                       }

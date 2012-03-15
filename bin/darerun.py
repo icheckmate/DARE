@@ -46,4 +46,4 @@ if __name__ == "__main__":
        conffile = sys.argv[1] 
     else:
        raise Exception, "missing dare configurtion file" 
-    main(conffile)
+    main()

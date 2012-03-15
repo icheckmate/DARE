@@ -34,7 +34,7 @@ class StepUnit(StepUnit):
             "dare_web_id":step_info["dare_web_id"],
             "name": step_info["name"],
             "status": step_info["status"],
-            "compute_units":  step_info["work_units"],
+            "compute_units":  step_info["compute_units"],
             "transfer_input_data_units":  step_info["transfer_input_data_units"],        
             "transfer_output_data_units":  step_info["transfer_output_data_units"],
             "start_after_steps": step_info["start_after_steps"]
