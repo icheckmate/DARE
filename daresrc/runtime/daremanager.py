@@ -52,7 +52,7 @@ class DareManager(object):
         self.start()
 
     def start(self):         
-        #try:
+        try:
            #create multiple manyjobs
             logger.info("Create Compute Engine service ")
 
@@ -88,7 +88,7 @@ class DareManager(object):
              
             while(1):     
                 count_step = [v.is_alive() for k,v in self.step_thread.items()]
-                print 'count_step', count_step
+                #print 'count_step', count_step
                 if not True in count_step and len(count_step)>0:                      
                     break
                 time.sleep(10)
@@ -97,8 +97,8 @@ class DareManager(object):
             logger.info(" All Steps Done processing")
 
             self.cancel()
-        #except:
-        #    self.cancel()
+        except:
+            self.cancel()
 
 
     def check_to_start_step(self, step_id):
@@ -127,7 +127,7 @@ class DareManager(object):
                 time.sleep(10)
     
     def run_step(self, step_id):
-        self.step_run_lock.acquire()
+        #self.step_run_lock.acquire()
         starttime = time.time()
 
         #job started update status 
@@ -196,7 +196,7 @@ class DareManager(object):
         #all jobs done update status
 
         self.step_units_repo[step_id].change_status(self.updater, StepUnitStates.Done)
-        self.step_run_lock.release()
+        #self.step_run_lock.release()
 
 
     def has_finished(self, state):

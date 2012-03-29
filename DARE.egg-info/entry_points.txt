@@ -1,0 +1,3 @@
+[console_scripts]
+dare-run = bin.darerun:main
+
