@@ -11,5 +11,5 @@
 envdare
 build
 dist
-
+DARE.egg-info
 *.DS_Store
