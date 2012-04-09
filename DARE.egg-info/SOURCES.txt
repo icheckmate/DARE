@@ -2,6 +2,7 @@ CHANGES
 LICENSE
 MANIFEST.in
 README
+distribute_setup.py
 llll.py
 setup.py
 DARE.egg-info/PKG-INFO

@@ -361,7 +361,7 @@ class DareManager(object):
                         "number_of_processes": 1,
                         #"working_directory": cu_working_directory,
                         "output":"dare-cu-stdout-"+ cu_uuid +".txt",
-                        "stderr": "dare-cu-stderr-"+ cu_uuid +".txt",   
+                        "error": "dare-cu-stderr-"+ cu_uuid +".txt",   
                         "affinity_datacenter_label": "%s-adl"%step_info_from_main_cfg.get('resource', self.dare_conf_main['used_pilots'].split(',')[0]).strip(),              
                         "affinity_machine_label": "%s-aml"%step_info_from_main_cfg.get('resource', self.dare_conf_main['used_pilots'].split(',')[0]).strip() 
                        }    
