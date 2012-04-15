@@ -1,6 +1,7 @@
-include *.py
-include dare/*.py
-include dare/plugins/*.py
-include bliss/runtime/*.py
+include daresrc/*.py
+include daresrc/daredb/*
+include daresrc/runtime/*.py
+include daresrc/runtime/utils/*.py
 
-include MANIFEST.in README LICENSE CHANGES
+
+include MANIFEST.in README.md LICENSE.md CHANGES.md
