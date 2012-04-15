@@ -23,3 +23,20 @@ try:
 except IOError:
     logger.error("cannot read the verison file")
 
+
+try:
+    import ConfigParser
+    if os.path.isfile(os.path.expanduser('~/.darerc')):
+        _conf_file = os.path.expanduser('~/.darerc')
+    else:
+	    _conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dare.conf')
+
+    cfgparser = ConfigParser.ConfigParser()
+    cfgparser.read(_conf_file)
+    cfgdict = cfgparser.defaults()
+    COORDINATION_URL = cfgdict.get('COORDINATION_URL', "redis://gw68.quarry.iu.teragrid.org:6379")
+
+except IOError:
+    logger.error("dare conf file does not exist. using default coordination mechanism")
+    COORDINATION_URL = "redis://gw68.quarry.iu.teragrid.org:6379"
+

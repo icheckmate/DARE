@@ -20,30 +20,20 @@ from daresrc.utils.stepunit import StepUnit ,StepUnitStates
 from daresrc.utils.cfgparser import CfgParser
 
 from daresrc.utils.updater import Updater
-
-
-COORDINATION_URL = "redis://127.0.0.1:6379"
-
+from daresrc import COORDINATION_URL
 
 class DareManager(object):
     
     def __init__(self, conffile="/path/to/conf/file"):
         
         self.dare_conffile = conffile
-
-
         self.dare_id = "dare-" + str(uuid.uuid1())
- 
         self.darecfg = {}
-
         self.compute_pilot_repo = {}
         self.data_pilot_repo= {}
-
         self.compute_pilot_service_repo=[]
         self.data_pilot_service_repo = [] 
-             
         self.step_units_repo = {}
-
         self.compute_units_repo = {}
         self.data_units_repo = {}
 
@@ -82,10 +72,8 @@ class DareManager(object):
                     self.step_start_lock.release()
 
                     self.step_thread[step_id] = threading.Thread(target=self.start_step)
-                    
                     self.step_thread[step_id].start()
                     
-             
             while(1):     
                 count_step = [v.is_alive() for k,v in self.step_thread.items()]
                 #print 'count_step', count_step
@@ -322,10 +310,10 @@ class DareManager(object):
 
         
     def prepare_compute_units(self):
+        """add prepare work dir """
 
         logger.info("Starting to prepare Compute Units ")
 
-        #add prepare work dir 
 
         for step in self.dare_conf_main['steps'].split(','):
             logger.info("Preparing compute Units: %s"%step)
