@@ -27,7 +27,7 @@ setup(name='DARE',
             'daresrc': ['daredb/*.cfg'],
         },
 
-        install_requires=['bigjob-test'],
+        install_requires=['bigjob'],
 
         entry_points = {
             'console_scripts': ['dare-run = bin.darerun:main',]}
