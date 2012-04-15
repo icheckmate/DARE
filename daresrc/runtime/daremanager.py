@@ -23,9 +23,15 @@ from daresrc.utils.updater import Updater
 from daresrc import COORDINATION_URL
 
 class DareManager(object):
-    
+    """DARE manager:
+       - reads different configuration files
+       - creates work flow, pilot units, step units, compute units, data units.
+       - starts/monitors/terminates  pilot jobs
+       - submits compute/data units as that in various steps"""
+   
+    """Constructor"""
     def __init__(self, conffile="/path/to/conf/file"):
-        
+        "" ""
         self.dare_conffile = conffile
         self.dare_id = "dare-" + str(uuid.uuid1())
         self.darecfg = {}
@@ -43,7 +49,6 @@ class DareManager(object):
 
     def start(self):         
         try:
-           #create multiple manyjobs
             logger.info("Create Compute Engine service ")
 
             self.pilot_compute_service = PilotComputeService()
@@ -417,4 +422,4 @@ class DareManager(object):
         self.compute_data_service.cancel()
 
         self.pilot_data_service.cancel()         
-        self.pilot_compute_service.cancel() 
+        self.pilot_compute_service.cancel()

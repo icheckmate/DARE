@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>daresrc.utils.stepunit</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="daresrc-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="daresrc-module.html">Package&nbsp;daresrc</a> ::
+        <a href="daresrc.utils-module.html">Package&nbsp;utils</a> ::
+        Module&nbsp;stepunit
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="daresrc.utils.stepunit-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="daresrc.utils.stepunit-module.html">Module daresrc.utils.stepunit</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/env python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-name">__author__</tt>    <tt class="py-op">=</tt> <tt class="py-docstring">"Sharath Maddineni"</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt id="link-0" class="py-name" targets="Variable daresrc.__email__=daresrc-module.html#__email__,Variable daresrc.api.__email__=daresrc.api-module.html#__email__,Variable daresrc.bin.dare_create_workflow.__email__=daresrc.bin.dare_create_workflow-module.html#__email__,Variable daresrc.bin.darerun.__email__=daresrc.bin.darerun-module.html#__email__,Variable daresrc.runtime.__email__=daresrc.runtime-module.html#__email__,Variable daresrc.runtime.daremanager.__email__=daresrc.runtime.daremanager-module.html#__email__,Variable daresrc.utils.__email__=daresrc.utils-module.html#__email__,Variable daresrc.utils.cfgparser.__email__=daresrc.utils.cfgparser-module.html#__email__,Variable daresrc.utils.data.__email__=daresrc.utils.data-module.html#__email__,Variable daresrc.utils.data.data.__email__=daresrc.utils.data.data-module.html#__email__,Variable daresrc.utils.stepunit.__email__=daresrc.utils.stepunit-module.html#__email__,Variable daresrc.utils.updater.__email__=daresrc.utils.updater-module.html#__email__"><a title="daresrc.__email__
+daresrc.api.__email__
+daresrc.bin.dare_create_workflow.__email__
+daresrc.bin.darerun.__email__
+daresrc.runtime.__email__
+daresrc.runtime.daremanager.__email__
+daresrc.utils.__email__
+daresrc.utils.cfgparser.__email__
+daresrc.utils.data.__email__
+daresrc.utils.data.data.__email__
+daresrc.utils.stepunit.__email__
+daresrc.utils.updater.__email__" class="py-name" href="#" onclick="return doclink('link-0', '__email__', 'link-0');">__email__</a></tt>     <tt class="py-op">=</tt> <tt class="py-string">"smaddineni@cct.lsu.edu"</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-name">__copyright__</tt> <tt class="py-op">=</tt> <tt class="py-string">"Copyright 2011, Sharath Maddineni"</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-name">__license__</tt>   <tt class="py-op">=</tt> <tt class="py-string">"MIT"</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-1" class="py-name" targets="Package daresrc=daresrc-module.html"><a title="daresrc" class="py-name" href="#" onclick="return doclink('link-1', 'daresrc', 'link-1');">daresrc</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module daresrc.api=daresrc.api-module.html"><a title="daresrc.api" class="py-name" href="#" onclick="return doclink('link-2', 'api', 'link-2');">api</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Class daresrc.api.StepUnit=daresrc.api.StepUnit-class.html,Class daresrc.utils.stepunit.StepUnit=daresrc.utils.stepunit.StepUnit-class.html"><a title="daresrc.api.StepUnit
+daresrc.utils.stepunit.StepUnit" class="py-name" href="#" onclick="return doclink('link-3', 'StepUnit', 'link-3');">StepUnit</a></tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"> </tt>
+<a name="StepUnitStates"></a><div id="StepUnitStates-def"><a name="L12"></a><tt class="py-lineno">12</tt> <a class="py-toggle" href="#" id="StepUnitStates-toggle" onclick="return toggle('StepUnitStates');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnitStates-class.html">StepUnitStates</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnitStates-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="StepUnitStates-expanded"><a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line">    <tt id="link-4" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Unknown=daresrc.api.ComputePilotStates-class.html#Unknown,Variable daresrc.api.ComputeUnitStates.Unknown=daresrc.api.ComputeUnitStates-class.html#Unknown,Variable daresrc.api.DataPilotStates.Unknown=daresrc.api.DataPilotStates-class.html#Unknown,Variable daresrc.api.DataUnitStates.Unknown=daresrc.api.DataUnitStates-class.html#Unknown,Variable daresrc.utils.stepunit.StepUnitStates.Unknown=daresrc.utils.stepunit.StepUnitStates-class.html#Unknown"><a title="daresrc.api.ComputePilotStates.Unknown
+daresrc.api.ComputeUnitStates.Unknown
+daresrc.api.DataPilotStates.Unknown
+daresrc.api.DataUnitStates.Unknown
+daresrc.utils.stepunit.StepUnitStates.Unknown" class="py-name" href="#" onclick="return doclink('link-4', 'Unknown', 'link-4');">Unknown</a></tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line">    <tt id="link-5" class="py-name" targets="Variable daresrc.api.ComputePilotStates.New=daresrc.api.ComputePilotStates-class.html#New,Variable daresrc.api.ComputeUnitStates.New=daresrc.api.ComputeUnitStates-class.html#New,Variable daresrc.api.DataPilotStates.New=daresrc.api.DataPilotStates-class.html#New,Variable daresrc.api.DataUnitStates.New=daresrc.api.DataUnitStates-class.html#New,Variable daresrc.utils.stepunit.StepUnitStates.New=daresrc.utils.stepunit.StepUnitStates-class.html#New"><a title="daresrc.api.ComputePilotStates.New
+daresrc.api.ComputeUnitStates.New
+daresrc.api.DataPilotStates.New
+daresrc.api.DataUnitStates.New
+daresrc.utils.stepunit.StepUnitStates.New" class="py-name" href="#" onclick="return doclink('link-5', 'New', 'link-5');">New</a></tt> <tt class="py-op">=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line">    <tt id="link-6" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Running=daresrc.api.ComputePilotStates-class.html#Running,Variable daresrc.api.ComputeUnitStates.Running=daresrc.api.ComputeUnitStates-class.html#Running,Variable daresrc.api.DataPilotStates.Running=daresrc.api.DataPilotStates-class.html#Running,Variable daresrc.api.DataUnitStates.Running=daresrc.api.DataUnitStates-class.html#Running,Variable daresrc.utils.stepunit.StepUnitStates.Running=daresrc.utils.stepunit.StepUnitStates-class.html#Running"><a title="daresrc.api.ComputePilotStates.Running
+daresrc.api.ComputeUnitStates.Running
+daresrc.api.DataPilotStates.Running
+daresrc.api.DataUnitStates.Running
+daresrc.utils.stepunit.StepUnitStates.Running" class="py-name" href="#" onclick="return doclink('link-6', 'Running', 'link-6');">Running</a></tt> <tt class="py-op">=</tt> <tt class="py-number">2</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line">    <tt id="link-7" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Done=daresrc.api.ComputePilotStates-class.html#Done,Variable daresrc.api.ComputeUnitStates.Done=daresrc.api.ComputeUnitStates-class.html#Done,Variable daresrc.api.DataPilotStates.Done=daresrc.api.DataPilotStates-class.html#Done,Variable daresrc.api.DataUnitStates.Done=daresrc.api.DataUnitStates-class.html#Done,Variable daresrc.utils.stepunit.StepUnitStates.Done=daresrc.utils.stepunit.StepUnitStates-class.html#Done"><a title="daresrc.api.ComputePilotStates.Done
+daresrc.api.ComputeUnitStates.Done
+daresrc.api.DataPilotStates.Done
+daresrc.api.DataUnitStates.Done
+daresrc.utils.stepunit.StepUnitStates.Done" class="py-name" href="#" onclick="return doclink('link-7', 'Done', 'link-7');">Done</a></tt> <tt class="py-op">=</tt> <tt class="py-number">3</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">    <tt id="link-8" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Canceled=daresrc.api.ComputePilotStates-class.html#Canceled,Variable daresrc.api.ComputeUnitStates.Canceled=daresrc.api.ComputeUnitStates-class.html#Canceled,Variable daresrc.api.DataPilotStates.Canceled=daresrc.api.DataPilotStates-class.html#Canceled,Variable daresrc.api.DataUnitStates.Canceled=daresrc.api.DataUnitStates-class.html#Canceled,Variable daresrc.utils.stepunit.StepUnitStates.Canceled=daresrc.utils.stepunit.StepUnitStates-class.html#Canceled"><a title="daresrc.api.ComputePilotStates.Canceled
+daresrc.api.ComputeUnitStates.Canceled
+daresrc.api.DataPilotStates.Canceled
+daresrc.api.DataUnitStates.Canceled
+daresrc.utils.stepunit.StepUnitStates.Canceled" class="py-name" href="#" onclick="return doclink('link-8', 'Canceled', 'link-8');">Canceled</a></tt> <tt class="py-op">=</tt> <tt class="py-number">4</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line">    <tt id="link-9" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Failed=daresrc.api.ComputePilotStates-class.html#Failed,Variable daresrc.api.ComputeUnitStates.Failed=daresrc.api.ComputeUnitStates-class.html#Failed,Variable daresrc.api.DataPilotStates.Failed=daresrc.api.DataPilotStates-class.html#Failed,Variable daresrc.api.DataUnitStates.Failed=daresrc.api.DataUnitStates-class.html#Failed,Variable daresrc.utils.stepunit.StepUnitStates.Failed=daresrc.utils.stepunit.StepUnitStates-class.html#Failed"><a title="daresrc.api.ComputePilotStates.Failed
+daresrc.api.ComputeUnitStates.Failed
+daresrc.api.DataPilotStates.Failed
+daresrc.api.DataUnitStates.Failed
+daresrc.utils.stepunit.StepUnitStates.Failed" class="py-name" href="#" onclick="return doclink('link-9', 'Failed', 'link-9');">Failed</a></tt> <tt class="py-op">=</tt> <tt class="py-number">5</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line">    <tt id="link-10" class="py-name" targets="Variable daresrc.api.ComputePilotStates.Queue=daresrc.api.ComputePilotStates-class.html#Queue,Variable daresrc.utils.stepunit.StepUnitStates.Queue=daresrc.utils.stepunit.StepUnitStates-class.html#Queue"><a title="daresrc.api.ComputePilotStates.Queue
+daresrc.utils.stepunit.StepUnitStates.Queue" class="py-name" href="#" onclick="return doclink('link-10', 'Queue', 'link-10');">Queue</a></tt> <tt class="py-op">=</tt> <tt class="py-number">6</tt> </tt>
+</div><a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit"></a><div id="StepUnit-def"><a name="L22"></a><tt class="py-lineno">22</tt> <a class="py-toggle" href="#" id="StepUnit-toggle" onclick="return toggle('StepUnit');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html">StepUnit</a><tt class="py-op">(</tt><tt class="py-base-class">StepUnit</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="StepUnit-expanded"><a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line">      </tt>
+<a name="StepUnit.__init__"></a><div id="StepUnit.__init__-def"><a name="L24"></a><tt class="py-lineno">24</tt> <a class="py-toggle" href="#" id="StepUnit.__init__-toggle" onclick="return toggle('StepUnit.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.__init__-expanded"><a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">           </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">type</tt> <tt class="py-op">=</tt> <tt class="py-string">"steps"</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-op">}</tt>        </tt>
+</div><a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">     </tt>
+<a name="StepUnit.define_param"></a><div id="StepUnit.define_param-def"><a name="L30"></a><tt class="py-lineno">30</tt> <a class="py-toggle" href="#" id="StepUnit.define_param-toggle" onclick="return toggle('StepUnit.define_param');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#define_param">define_param</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">step_info</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.define_param-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.define_param-expanded"><a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt>         </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">            <tt class="py-string">"step_id"</tt><tt class="py-op">:</tt> <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"step_id"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">            <tt class="py-string">"dare_web_id"</tt><tt class="py-op">:</tt><tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"dare_web_id"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">            <tt class="py-string">"name"</tt><tt class="py-op">:</tt> <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"name"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">            <tt class="py-string">"status"</tt><tt class="py-op">:</tt> <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"status"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">            <tt class="py-string">"compute_units"</tt><tt class="py-op">:</tt>  <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"compute_units"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">            <tt class="py-string">"transfer_input_data_units"</tt><tt class="py-op">:</tt>  <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"transfer_input_data_units"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt>         </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">            <tt class="py-string">"transfer_output_data_units"</tt><tt class="py-op">:</tt>  <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"transfer_output_data_units"</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">            <tt class="py-string">"start_after_steps"</tt><tt class="py-op">:</tt> <tt class="py-name">step_info</tt><tt class="py-op">[</tt><tt class="py-string">"start_after_steps"</tt><tt class="py-op">]</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">        <tt class="py-op">}</tt> </tt>
+</div><a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit.get_step_id"></a><div id="StepUnit.get_step_id-def"><a name="L42"></a><tt class="py-lineno">42</tt> <a class="py-toggle" href="#" id="StepUnit.get_step_id-toggle" onclick="return toggle('StepUnit.get_step_id');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#get_step_id">get_step_id</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.get_step_id-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.get_step_id-expanded"><a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'step_id'</tt><tt class="py-op">]</tt> </tt>
+</div><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit.add_cu"></a><div id="StepUnit.add_cu-def"><a name="L45"></a><tt class="py-lineno">45</tt> <a class="py-toggle" href="#" id="StepUnit.add_cu-toggle" onclick="return toggle('StepUnit.add_cu');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#add_cu">add_cu</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">cu_id</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.add_cu-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.add_cu-expanded"><a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'compute_units'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">cu_id</tt><tt class="py-op">)</tt>   </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">True</tt>  </tt>
+</div><a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit.add_input_du"></a><div id="StepUnit.add_input_du-def"><a name="L49"></a><tt class="py-lineno">49</tt> <a class="py-toggle" href="#" id="StepUnit.add_input_du-toggle" onclick="return toggle('StepUnit.add_input_du');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#add_input_du">add_input_du</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">cu_id</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.add_input_du-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.add_input_du-expanded"><a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'transfer_input_data_units'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">append</tt><tt class="py-op">(</tt><tt class="py-name">cu_id</tt><tt class="py-op">)</tt>   </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">True</tt>  </tt>
+</div><a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">     </tt>
+<a name="StepUnit.change_status"></a><div id="StepUnit.change_status-def"><a name="L53"></a><tt class="py-lineno">53</tt> <a class="py-toggle" href="#" id="StepUnit.change_status-toggle" onclick="return toggle('StepUnit.change_status');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#change_status">change_status</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">updater</tt><tt class="py-op">,</tt><tt class="py-param">status</tt><tt class="py-op">)</tt><tt class="py-op">:</tt>         </tt>
+</div><a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'status'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt>  <tt class="py-name">status</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">        <tt id="link-11" class="py-name" targets="Module daresrc.utils.updater=daresrc.utils.updater-module.html"><a title="daresrc.utils.updater" class="py-name" href="#" onclick="return doclink('link-11', 'updater', 'link-11');">updater</a></tt><tt class="py-op">.</tt><tt id="link-12" class="py-name" targets="Method daresrc.utils.updater.Updater.update_status()=daresrc.utils.updater.Updater-class.html#update_status"><a title="daresrc.utils.updater.Updater.update_status" class="py-name" href="#" onclick="return doclink('link-12', 'update_status', 'link-12');">update_status</a></tt><tt class="py-op">(</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'dare_web_id'</tt><tt class="py-op">]</tt><tt class="py-op">,</tt> <tt class="py-string">"%s in step %s"</tt><tt class="py-op">%</tt><tt class="py-op">(</tt><tt class="py-name">status</tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'name'</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit.get_status"></a><div id="StepUnit.get_status-def"><a name="L57"></a><tt class="py-lineno">57</tt> <a class="py-toggle" href="#" id="StepUnit.get_status-toggle" onclick="return toggle('StepUnit.get_status');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#get_status">get_status</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.get_status-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.get_status-expanded"><a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'status'</tt><tt class="py-op">]</tt>  </tt>
+</div><a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">      </tt>
+<a name="StepUnit.get_param"></a><div id="StepUnit.get_param-def"><a name="L60"></a><tt class="py-lineno">60</tt> <a class="py-toggle" href="#" id="StepUnit.get_param-toggle" onclick="return toggle('StepUnit.get_param');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#get_param">get_param</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.get_param-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.get_param-expanded"><a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line"> </tt>
+<a name="StepUnit.__repr__"></a><div id="StepUnit.__repr__-def"><a name="L63"></a><tt class="py-lineno">63</tt> <a class="py-toggle" href="#" id="StepUnit.__repr__-toggle" onclick="return toggle('StepUnit.__repr__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="daresrc.utils.stepunit.StepUnit-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="StepUnit.__repr__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="StepUnit.__repr__-expanded"><a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">UnitInfo</tt><tt class="py-op">[</tt><tt class="py-string">'name'</tt><tt class="py-op">]</tt> </tt>
+</div></div><a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="daresrc-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sun Apr 15 02:44:09 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

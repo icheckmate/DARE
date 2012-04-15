@@ -1,0 +1,3 @@
+setup	setup-module.html
+setup.version	setup-module.html#version
+setup.fn	setup-module.html#fn

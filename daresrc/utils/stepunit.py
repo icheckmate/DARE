@@ -7,7 +7,6 @@ __license__   = "MIT"
 
 
 import os
-
 from daresrc.api import StepUnit
 
 class StepUnitStates(object):
@@ -60,3 +59,6 @@ class StepUnit(StepUnit):
      
     def get_param(self):
         pass
+
+    def __repr__(self):
+        return self.UnitInfo['name']
