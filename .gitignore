@@ -1,5 +1,8 @@
 #python specific
 *.pyc
+*.egg
+*.gz
+*.DS_Store
 
 ## generic files to ignore
 *~
@@ -12,6 +15,3 @@ envdare
 build
 dist
 DARE.egg-info
-*.egg
-*.tar.gz
-*.DS_Store
