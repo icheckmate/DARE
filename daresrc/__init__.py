@@ -16,7 +16,7 @@ logger = logging.getLogger(name='DARE')
 version = "latest"
 
 try:
-    version_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..','VERSION')
+    version_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
     version = open(version_file).read().strip()
     logger.info("Loading DARE version: " + version)
 
