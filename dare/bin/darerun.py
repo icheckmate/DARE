@@ -12,7 +12,7 @@ parser = optparse.OptionParser()
 sys.path.insert(0, os.path.abspath( "../.."))
 
 from dare import darelogger
-from dare.core.daremanager import DareManager
+from dare.core.dare_manager import DareManager
 
 def main():
     

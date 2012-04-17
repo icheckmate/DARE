@@ -38,7 +38,7 @@ class DareManager(object):
         self.start()
 
     def start(self):         
-        try:
+       # try:
             from pilot import PilotComputeService, PilotDataService, ComputeDataService, State
 
             darelogger.info("Create Compute Engine service ")
@@ -73,7 +73,7 @@ class DareManager(object):
                     
             while(1):     
                 count_step = [v.is_alive() for k,v in self.step_thread.items()]
-                darelogger.inf('count_step', count_step)
+                darelogger.info('count_step %s'%count_step)
                 if not True in count_step and len(count_step)>0:                      
                     break
                 time.sleep(10)
@@ -82,8 +82,8 @@ class DareManager(object):
             darelogger.info(" All Steps Done processing")
 
             self.cancel()
-        except:
-            self.cancel()
+        #except:
+         #   self.cancel()
 
 
     def check_to_start_step(self, step_id):

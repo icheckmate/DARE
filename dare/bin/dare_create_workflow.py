@@ -9,8 +9,8 @@ sys.path.insert(0,"..")
 import optparse
 parser = optparse.OptionParser()
 
-import daresrc.runtime
-from daresrc.utils.cfgparser import CfgParser
+import dare.core
+from dare.helpers.cfgparser import CfgParser
 
 
 if __name__ == "__main__":

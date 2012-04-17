@@ -11,10 +11,10 @@ import sys
 import time
 import threading
 
-from daresrc import darelogger
+from dare import darelogger
 
-from daresrc.utils.stepunit import StepUnit ,StepUnitStates
-from daresrc.utils.cfgparser import CfgParser
+from .stepunit import StepUnit ,StepUnitStates
+from .cfgparser import CfgParser
 
 class PrepareWorkFlow(object):
     """DARE prepare WF:

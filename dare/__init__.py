@@ -40,7 +40,7 @@ try:
         _conf_file = os.path.expanduser('~/.darerc')
         darelogger.error("found ~/.darerc file using it for settings")
     except:
-        _conf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dare.conf')
+        _conf_file = os.path.join(os.path.abspath('..'), '..', 'dare.conf')
         darelogger.error("usning default dare config file")       
 
     cfgparser = ConfigParser.ConfigParser()
