@@ -8,14 +8,15 @@ __license__   = "MIT"
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)) + ".."))
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),  "..",  ".."))
 
 import optparse
 parser = optparse.OptionParser()
 
+from daresrc import darelogger
 from daresrc.runtime.daremanager import DareManager
 
-from daresrc import logging
 
 def main():
     
@@ -32,14 +33,14 @@ def main():
        raise Exception, "missing dare configurtion file"
 
 
-    logging.debug("starting DARE")
+    darelogger.debug("starting DARE")
     try:
        dare = DareManager(conffile)
        #dare.start()
     except KeyboardInterrupt:
        dare.cancel()
 
-    logging.debug("DARE Exec Done")
+    darelogger.debug("DARE Exec Done")
      
 if __name__ == "__main__":
     if (len(sys.argv)> 1): 

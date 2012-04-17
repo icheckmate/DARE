@@ -18,10 +18,6 @@ else:
 sys.path.insert(0, os.path.join(DARE_WEB_LIB, 'lib'))
 #import ormconnector as jobmodel_helper
 
-
-
-
-
 class Updater():
     def __init__(self,check,jobid):
         try:

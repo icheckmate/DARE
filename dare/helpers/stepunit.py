@@ -50,10 +50,6 @@ class StepUnit(StepUnit):
         self.UnitInfo['transfer_input_data_units'].append(cu_id)  
         return True 
     
-    def change_status(self, updater,status):        
-        self.UnitInfo['status'] =  status
-        updater.update_status( self.UnitInfo['dare_web_id'], "%s in step %s"%(status, self.UnitInfo['name']))
-
     def get_status(self):
         return self.UnitInfo['status'] 
      
