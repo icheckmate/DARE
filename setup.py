@@ -5,7 +5,7 @@ import distribute_setup
 distribute_setup.use_setuptools()
 
 import os
-fn = os.path.join(os.path.dirname(os.path.abspath(__file__)),'daresrc', 'VERSION')
+fn = os.path.join(os.path.abspath('.'),'dare', 'VERSION')
 version = open(fn).read().strip()
     
 setup(name='DARE',
