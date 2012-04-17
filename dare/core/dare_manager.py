@@ -78,7 +78,6 @@ class DareManager(object):
                     break
                 time.sleep(10)
                        
-
             darelogger.info(" All Steps Done processing")
 
             self.cancel()
@@ -133,12 +132,12 @@ class DareManager(object):
         job_states = {}
         NUMBER_JOBS = len(self.workflow.step_units_repo[step_id].UnitInfo['compute_units'])
         for cu_id in self.workflow.step_units_repo[step_id].UnitInfo['compute_units']:                    
-                compute_unit = self.compute_data_service.submit_compute_unit(self.workflow.compute_units_repo[cu_id])
-                darelogger.info("Compute Unit: Description: \n%s"%(str(self.workflow.compute_units_repo[cu_id])))
-                jobs.append(compute_unit)
-                job_start_times[compute_unit]=time.time()
-                job_states[compute_unit] = compute_unit.get_state()
-        
+            compute_unit = self.compute_data_service.submit_compute_unit(self.workflow.compute_units_repo[cu_id])
+            darelogger.info("Compute Unit: Description: \n%s"%(str(self.workflow.compute_units_repo[cu_id])))
+            jobs.append(compute_unit)
+            job_start_times[compute_unit]=time.time()
+            job_states[compute_unit] = compute_unit.get_state()
+    
 
         darelogger.debug("************************ All Jobs submitted ************************")
 
@@ -164,6 +163,8 @@ class DareManager(object):
             time.sleep(5)
             if finish_counter == NUMBER_JOBS:
                 break
+
+        self.workflow.step_units_repo[step_id].set_status(StepUnitStates.Done)
 
         #self.compute_data_service.wait() 
         darelogger.debug(" Compute jobs for step %s complete"%step_id)
@@ -196,6 +197,7 @@ class DareManager(object):
 
     def check_to_start_step(self, step_id):
         flags = []
+#        import pdb; pdb.set_trace()
         print self.workflow.step_units_repo[step_id].UnitInfo['start_after_steps']
         if self.workflow.step_units_repo[step_id].get_status() == StepUnitStates.New:  
            for dep_step_id in self.workflow.step_units_repo[step_id].UnitInfo['start_after_steps']:

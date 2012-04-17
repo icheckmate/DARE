@@ -52,7 +52,11 @@ class StepUnit(StepUnit):
     
     def get_status(self):
         return self.UnitInfo['status'] 
-     
+
+    def set_status(self, status):
+        self.UnitInfo['status'] = status 
+          
+
     def get_param(self):
         pass
 

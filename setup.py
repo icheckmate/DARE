@@ -8,7 +8,6 @@ import os
 fn = os.path.join(os.path.dirname(os.path.abspath(__file__)),'daresrc', 'VERSION')
 version = open(fn).read().strip()
     
-
 setup(name='DARE',
         version=version,
         description='Dynamic Application Runtime Environment',
@@ -18,19 +17,16 @@ setup(name='DARE',
         maintainer_email= "smaddineni@cct.lsu.edu",
         url='http=//dare.cct.lsu.edu/',
         license= "MIT",
-        packages=['daresrc', 'daresrc.bin', 'daresrc.runtime', 'daresrc.daredb', 'daresrc.utils'],
-        data_files=['dare.conf', 'daresrc/VERSION'],
+        packages=['dare', 'dare.bin', 'dare.core', 'dare.daredb', 'dare.helpers'],
+        data_files=['dare.conf', 'dare/VERSION'],
         package_data = {
             # If any package contains *.txt files, include them:
             '': ['*.cfg'],
             '': ['*.cu'],
-            'daresrc': ['daredb/*.cu'],
-            'daresrc': ['daredb/*.cfg'],
+            'dare': ['daredb/*.cu'],
+            'dare': ['daredb/*.cfg'],
         },
-
         install_requires=['bigjob'],
-
         entry_points = {
             'console_scripts': ['dare-run = daresr.bin.darerun:main',]}
-
      )

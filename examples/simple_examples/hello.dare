@@ -20,7 +20,7 @@ step_cfg_file = default
 
 [hello_2]
 step_name = hello_2
-#start_after_steps = hello_1
+start_after_steps = hello_1
 cu_type = echo_hello
 input_names = two
 #step_cfg_file = /path/to/cfg
