@@ -28,5 +28,5 @@ setup(name='DARE',
         },
         install_requires=['bigjob'],
         entry_points = {
-            'console_scripts': ['dare-run = daresr.bin.darerun:main',]}
+            'console_scripts': ['dare-run = dare.bin.darerun:main',]}
      )
