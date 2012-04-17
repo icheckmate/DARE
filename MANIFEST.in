@@ -1,7 +1,7 @@
-include daresrc/*.py
-include daresrc/daredb/*
-include daresrc/runtime/*.py
-include daresrc/runtime/utils/*.py
+include dare/*.py
+include dare/daredb/*
+include dare/core/*.py
+include dare/helpers/*.py
 
 
 include MANIFEST.in README.md LICENSE.md CHANGES.md
