@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 __author__    = "Sharath Maddineni"
 __email__     = "smaddineni@cct.lsu.edu"
 __copyright__ = "Copyright 2011, Sharath Maddineni"
@@ -7,16 +6,13 @@ __license__   = "MIT"
 
 import sys
 import os
-
-
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),  "..",  ".."))
-
 import optparse
 parser = optparse.OptionParser()
 
-from daresrc import darelogger
-from daresrc.runtime.daremanager import DareManager
+sys.path.insert(0, os.path.abspath( "../.."))
 
+from dare import darelogger
+from dare.core.daremanager import DareManager
 
 def main():
     

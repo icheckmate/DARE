@@ -26,7 +26,7 @@ darelogger = DL()
 version = "latest"
 
 try:
-    version_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
+    version_file = os.path.join(os.path.abspath('.'), 'VERSION')
     version = open(version_file).read().strip()
     darelogger.info("Loading DARE version: " + version)
 

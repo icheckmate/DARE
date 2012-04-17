@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 __author__    = "Sharath Maddineni"
 __email__     = "smaddineni@cct.lsu.edu"
 __copyright__ = "Copyright 2011, Sharath Maddineni"
@@ -11,16 +10,15 @@ import sys
 import time
 import threading
 
-from daresrc import darelogger
+from dare import darelogger
 
+from dare.helpers.stepunit import StepUnit, StepUnitStates
+from dare.helpers.cfgparser import CfgParser
 
-from daresrc.utils.stepunit import StepUnit ,StepUnitStates
-from daresrc.utils.cfgparser import CfgParser
+from dare.helpers.prepareworkflow import PrepareWorkFlow
 
-from daresrc.utils.prepareworkflow import PrepareWorkFlow
-
-from daresrc.utils.updater import Updater
-from daresrc import COORDINATION_URL
+from dare.helpers.updater import Updater
+from dare import COORDINATION_URL
 
 class DareManager(object):
     """DARE manager:

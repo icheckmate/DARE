@@ -9,7 +9,6 @@ import uuid
 import os
 import sys
 import time
-import pdb
 import threading
 
 from daresrc import darelogger
